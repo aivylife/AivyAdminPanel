@@ -1,0 +1,379 @@
+/* stylelint-disable */
+// Quasar SCSS (& Sass) Variables
+// --------------------------------------------------
+// To customize the look and feel of this app, you can override
+// the Sass/SCSS variables found in Quasar's source Sass/SCSS files.
+// Check documentation for full list of Quasar variables
+
+// Your own variables (that are declared here) and Quasar's own
+// ones will be available out of the box in your .vue/.scss/.sass files
+
+// DS (Design System) - https://confluence.beeline.kz/pages/viewpage.action?pageId=96330272
+
+$black: #000;
+$white: #fff;
+$oracsecondary: #5F666D;
+
+//oraculum
+$grey-50: #FAFAFA;
+$grey-100: #F8F8F8;
+$grey-200: #F1F2F4;
+$grey-300: #E9EAEC;
+$grey-400: #CCCFD4;
+$grey-500: #93979C;
+$grey-600: #5F666D;
+$grey-700: #272B30;
+$grey-800: #1A1D1F;
+$orange: #FE964A;
+$purple: #8C62FF;
+
+$grey-1: $grey-50;
+$grey-2: $grey-100;
+$grey-3: $grey-200;
+$grey-4: $grey-300;
+$grey-5: $grey-400;
+$grey-6: $grey-500;
+$grey-7: $grey-600;
+$grey-8: $grey-700;
+$grey-9: $grey-800;
+$grey-10: #9F9CB2;
+$grey-11: #88849F;
+$grey-12: #706B8C;
+$grey-13: #585379;
+$grey-14: #403965;
+$grey-15: #282153;
+$grey-16: #10083F;
+$grey: $grey-5;
+
+$yellow-1: #FFFDF2;
+$yellow-2: #FFFBE6;
+$yellow-3: #FFF9D9;
+$yellow-4: #FFF6CC;
+$yellow-5: #FFF4BF;
+$yellow-6: #FFF3B3;
+$yellow-7: #FFEE99;
+$yellow-8: #FFEA80;
+$yellow-9: #FFE566;
+$yellow-10: #FFE14D;
+$yellow-11: #FFDD33;
+$yellow-12: #FFD91A;
+$yellow-13: #FFD400;
+$yellow-14: #E5BF00;
+$yellow-15: #CCAA00;
+$yellow-16: #B29400;
+$yellow-17: #997F00;
+$yellow-18: #7F6A00;
+$yellow-19: #665500;
+$yellow-20: #4C4000;
+$yellow-21: #403500;
+$yellow-22: #332A00;
+$yellow-23: #262000;
+$yellow-24: #191500;
+$yellow-25: #0D0B00;
+$yellow: $yellow-11;
+
+$green-1: #F7FCF5;
+$green-2: #F0FAED;
+$green-3: #E8F7E3;
+$green-4: #DFF4DA;
+$green-5: #D7F1D0;
+$green-6: #D0F0C8;
+$green-7: #C0EAB5;
+$green-8: #B0E5A2;
+$green-9: #A0DF8F;
+$green-10: #91DA7D;
+$green-11: #81D56A;
+$green-12: #71D058;
+$green-13: #61CA45;
+$green-14: #57B63E;
+$green-15: #4EA237;
+$green-16: #448D30;
+$green-17: #3A7929;
+$green-18: #306522;
+$green-19: #27511C;
+$green-20: #1D3D15;
+$green-21: #183211;
+$green-22: #13280E;
+$green-23: #0F1E0A;
+$green-24: #0A1407;
+$green-25: #050A03;
+$green: $green-13;
+
+$red-1: #FFF6F5;
+$red-2: #FFEFED;
+$red-3: #FFE6E3;
+$red-4: #FFDED9;
+$red-5: #FFD5D0;
+$red-6: #FFCEC7;
+$red-7: #FFBDB4;
+$red-8: #FFADA1;
+$red-9: #FF9C8E;
+$red-10: #FF8C7C;
+$red-11: #FF7B69;
+$red-12: #FF6B56;
+$red-13: #FF5A43;
+$red-14: #E5513C;
+$red-15: #CC4836;
+$red-16: #B23F2F;
+$red-17: #993628;
+$red-18: #7F2D21;
+$red-19: #66241B;
+$red-20: #4C1B14;
+$red-21: #401611;
+$red-22: #33120D;
+$red-23: #260D0A;
+$red-24: #190907;
+$red-25: #0D0403;
+$red: $red-13;
+
+$blue-1: #F3F6FC;
+$blue-2: #E7EEFB;
+$blue-3: #DBE5F8;
+$blue-4: #CEDBF5;
+$blue-5: #C2D2F2;
+$blue-6: #B7CAF1;
+$blue-7: #9EB8EB;
+$blue-8: #86A6E7;
+$blue-9: #6D94E2;
+$blue-10: #5583DD;
+$blue-11: #3D71D8;
+$blue-12: #255FD3;
+$blue-13: #0C4DCE;
+$blue-14: #0B45B9;
+$blue-15: #0A3EA5;
+$blue-16: #083690;
+$blue-17: #072E7C;
+$blue-18: #062667;
+$blue-19: #051F52;
+$blue-20: #04173E;
+$blue-21: #031333;
+$blue-22: #020F29;
+$blue-23: #020C1F;
+$blue-24: #010815;
+$blue-25: #01040A;
+$blue: $blue-13;
+
+$purple-1: #F6F3FB;
+$purple-2: #EDE8F7;
+$purple-3: #E4DBF3;
+$purple-4: #DBCFEF;
+$purple-5: #D1C3EA;
+$purple-6: #C9B8E7;
+$purple-7: #B7A0DF;
+$purple-8: #A588D7;
+$purple-9: #9270CE;
+$purple-10: #8159C7;
+$purple-11: #6E41BE;
+$purple-12: #5D29B7;
+$purple-13: #4A11AE;
+$purple-14: #430F9D;
+$purple-15: #3B0E8B;
+$purple-16: #340C7A;
+$purple-17: #2C0A68;
+$purple-18: #250857;
+$purple-19: #1E0746;
+$purple-20: #160534;
+$purple-21: #12042B;
+$purple-22: #0F0323;
+$purple-23: #0B021A;
+$purple-24: #070211;
+$purple-25: #040109;
+$purple: $purple-13;
+
+/**
+ * AIVY Color Palette
+ */
+
+// Бирюзовые оттенки
+$aivy-turquoise-1: #E6F7F7;
+$aivy-turquoise-2: #B3EBEB;
+$aivy-turquoise-3: #80DFDF;
+$aivy-turquoise-4: #4DD3D3;
+$aivy-turquoise-5: #00B5B5; // Base turquoise
+$aivy-turquoise-6: #009999;
+$aivy-turquoise-7: #007D7D;
+$aivy-turquoise-8: #006161;
+$aivy-turquoise-9: #004545;
+
+// Индиго оттенки
+$aivy-indigo-1: #EEF4FB;
+$aivy-indigo-2: #C9DDF2;
+$aivy-indigo-3: #94C5ED; // Base indigo
+$aivy-indigo-4: #6FAEE3;
+$aivy-indigo-5: #4A97D9;
+$aivy-indigo-6: #2580CF;
+$aivy-indigo-7: #1E66A6;
+$aivy-indigo-8: #174D7D;
+$aivy-indigo-9: #103454;
+
+// Семантические цвета AIVY
+$aivy-primary: $aivy-turquoise-5;
+$aivy-secondary: $aivy-indigo-3;
+$aivy-background: linear-gradient(135deg, $aivy-turquoise-1 0%, $aivy-indigo-1 100%);
+$aivy-surface: rgba(255, 255, 255, 0.95);
+$aivy-border: $aivy-turquoise-3;
+$aivy-text: #2C3E50;
+
+
+/**
+ * Quasar framework semantic colors overrides
+ */
+$primary:   $aivy-turquoise-5; // "action accent" from DS
+$secondary: $oracsecondary;
+$accent:    $grey-16; // "label primary" from DS
+
+$dark:      #1A1D1F; // "inverse" from DS
+$dark-page: #121212;
+$black-page: #111315;
+
+$positive:  $green-13;
+$negative:  $red-13;
+$info:      $blue-13;
+$warning:   $yellow-13;
+
+
+/**
+ * Custom semantic colors
+ */
+$body-color:           $grey-14; // "label paragraph" from DS
+$body-secondary-color: $grey-12; // "label secondary" from DS
+$border-color:         $grey-7;
+$heading-color:        $accent;
+$link-color:           $blue-13;
+$surface-color:        $grey-2;
+
+/**
+ * Custom variables
+ */
+
+// Quasar does not allow customizing the "$space" variables, so it is advisable to use custom variables
+$spacer-base: 1rem;
+$spacer-3xs:  $spacer-base * 0.125; // 2px
+$spacer-2xs:  $spacer-base * 0.25;  // 4px
+$spacer-xs:   $spacer-base * 0.5;   // 8px
+$spacer-sm:   $spacer-base * 0.75;  // 12px
+$spacer-md:   $spacer-base;         // 16px
+$spacer-lg:   $spacer-base * 1.25;  // 20px
+$spacer-xl:   $spacer-base * 1.5;   // 24px
+$spacer-2xl:  $spacer-base * 2;     // 32px
+$spacer-3xl:  $spacer-base * 2.5;   // 40px
+$spacer-4xl:  $spacer-base * 3;     // 48px
+$spacer-5xl:  $spacer-base * 4;     // 64px
+$spacer-6xl:  $spacer-base * 5;     // 80px
+
+$container-base: 1600px;
+$border-radius: 10px; // "default" from DS
+$border-radius-sm: 4px;
+$border-radius-lg: 24px; // "promo" from DS
+
+$shadow: 0 4px 16px 0 rgba($grey-16, 0.12);
+
+$font-size-xs: 0.75rem; // "caption" from DS
+$font-size-sm: 0.875rem; // "tag" from DS
+$font-size-base: 1rem; // "body-M" from DS
+$font-size-lg: 1.125rem; // "body-L" from DS
+$font-size-xl: 1.25rem;
+$font-size-2xl: 1.5rem;
+
+$element-size-xs: 2rem;
+$element-size-sm: 2.5rem;
+$element-size-base: 3rem;
+$element-size-lg: 3.5rem;
+$element-size-xl: 4rem;
+
+$button-size-xs: $element-size-xs;
+$button-size-sm: $element-size-sm;
+$button-size-base: $element-size-base;
+$button-size-lg: $element-size-lg;
+$button-size-xl: $element-size-xl;
+
+$select-size-sm: $element-size-sm;
+$select-size-md: $element-size-base;
+$select-size-lg: $element-size-lg;
+
+$card-section-padding: 24px;
+
+$chip-padding-sm: $spacer-2xs $spacer-xs;
+$chip-padding-md: 6px $spacer-sm;
+$chip-padding-lg: $spacer-xs $spacer-sm;
+$chip-border-radius-sm: $border-radius-sm;
+$chip-border-radius-md: $border-radius;
+$chip-border-radius-lg: $border-radius;
+$chip-font-size-sm: $font-size-xs;
+$chip-font-size-md: $font-size-sm;
+$chip-font-size-lg: $font-size-base;
+$chip-line-height-sm: 16px;
+$chip-line-height-md: 20px;
+$chip-line-height-lg: 24px;
+
+$status-approved: #285B1A;
+$status-canceled: #DB1B00;
+$status-in-processing: #A84600;
+$status-gone: #504D64;
+$status-few-plan: #0C4DCE;
+
+
+/*
+ * Quasar framework overrides
+ */
+$typography-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+$body-font-size: 16px;
+$body-line-height : 1.5;
+$h1: (size: 2.5rem,   line-height: 3rem,    letter-spacing: -.01562em, weight: 700, margin-bottom: $spacer-3xl);
+$h2: (size: 2rem,     line-height: 2.5rem,  letter-spacing: -.00833em, weight: 700, margin-bottom: $spacer-3xl);
+$h3: (size: 1.75rem,  line-height: 2rem,    letter-spacing: normal,    weight: 700, margin-bottom: $spacer-2xl);
+$h4: (size: 1.5rem,   line-height: 1.75rem, letter-spacing: .00735em,  weight: 700, margin-bottom: $spacer-xl);
+$h5: (size: 1.25rem,  line-height: 1.5rem,  letter-spacing: normal,    weight: 700, margin-bottom: $spacer-lg);
+$h6: (size: 1.125rem, line-height: 1.5rem,  letter-spacing: .0125em,   weight: 700, margin-bottom: $spacer-base);
+$heading-list: ('h1': $h1, 'h2': $h2, 'h3': $h3, 'h4': $h4, 'h5': $h5, 'h6': $h6);
+
+// Space overrides is only to align with the design system
+$space-base:     $spacer-base;
+$space-x-base:   $space-base;
+$space-y-base:   $space-base;
+$space-xs:       (x: ($space-x-base * .5), y: ($space-y-base * .5));
+$space-sm:       (x: ($space-x-base * .75), y: ($space-y-base * .75));
+$space-md:       (x: $space-x-base, y: $space-y-base);
+$space-lg:       (x: ($space-x-base * 1.25), y: ($space-y-base * 1.25));
+$space-xl:       (x: ($space-x-base * 1.5), y: ($space-y-base * 1.5));
+$flex-gutter-xs: ($space-base * .5);
+$flex-gutter-sm: ($space-base * .75);
+$flex-gutter-md: $space-base;
+$flex-gutter-lg: ($space-base * 1.25);
+$flex-gutter-xl: ($space-base * 1.5);
+
+$separator-color: $border-color; // "border default" from DS
+$separator-dark-color: #272B30;
+$tooltip-background: $grey-16;
+$button-padding: $spacer-sm $spacer-xl;
+$button-font-size: $font-size-base;
+$button-line-height: 1.5em;
+$button-font-weight: 600;
+$button-border-radius: $border-radius;
+$button-push-border-radius: $border-radius;
+$button-shadow: none;
+$button-shadow-active: none;
+$input-text-color: $accent;
+$input-label-color: $body-color;
+$menu-box-shadow: $shadow;
+
+/* Стили для скролла */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: linear-gradient(135deg, $aivy-turquoise-1 0%, $aivy-indigo-1 100%);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, $aivy-turquoise-5 0%, $aivy-indigo-3 100%);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, $aivy-turquoise-6 0%, $aivy-indigo-4 100%);
+}
+

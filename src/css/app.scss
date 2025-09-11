@@ -1,0 +1,7 @@
+// app global css in SCSS form
+
+@import '@unocss/reset/tailwind.css';
+@import 'quasar/src/css/index.sass';
+
+// app global css in SCSS form
+@import "quasar-overrides";

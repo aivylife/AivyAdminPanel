@@ -1,0 +1,173 @@
+/*
+ * Quasar does not provide the ability to override these values using scss variables
+ */
+.q-card {
+  box-shadow: $shadow;
+  border-radius: $border-radius;
+  // background-color: $aivy-turquoise-1;
+}
+
+/*
+ * In the QDate component, default buttons are used in the month picker.
+ * These buttons should have padding within the context of this component.
+ */
+.q-date__months-item .q-btn {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.q-uploader {
+  max-height: inherit
+}
+
+/* Quasar не позволяет переопределить отступ через переменные */
+.q-card__section--vert {
+  padding: $card-section-padding;
+}
+
+.q-tab-panel {
+  padding: $card-section-padding;
+}
+
+
+.q-select .q-field__native span {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  color: $accent;
+}
+
+.q-btn-group.q-btn-group--splitted {
+  > .q-btn-item:not(:last-child) {
+    border-top-right-radius: $button-border-radius;
+    border-bottom-right-radius: $button-border-radius;
+  }
+
+  > .q-btn-item:not(:first-child) {
+    border-top-left-radius: $button-border-radius;
+    border-bottom-left-radius: $button-border-radius;
+  }
+}
+
+.q-table--md {
+  th {
+    font-size: 14px;
+  }
+
+  thead tr {
+    height: 40px;
+  }
+
+  tbody td {
+    height: 42px;
+    font-size: 14px;
+  }
+}
+
+.q-table__header {
+  th {
+    font-size: $font-size-sm;
+    font-weight: 600;
+    color: $grey-16;
+  }
+}
+
+.q-list--sm > .q-item,
+.q-item--sm {
+  min-height: $button-size-sm;
+  padding: $spacer-2xs $spacer-base;
+}
+
+.q-field__label::first-letter,
+.q-field__messages::first-letter {
+  text-transform: capitalize;
+}
+
+.q-table--last-col-sticky {
+  thead tr:first-child th:last-child {
+    /* bg color is important for th; just specify one */
+    background-color: #fff
+  }
+
+  // stylelint-disable-next-line
+  th:last-child,
+  td:last-child {
+    position: sticky;
+    right: 0;
+    z-index: 1;
+  }
+
+  td:last-child {
+    background-color: #fff
+  }
+}
+
+.q-item.q-router-link--active,
+.q-item--active {
+  color: var(--q-info)
+}
+
+.q-loading {
+  &__box {
+    padding: $spacer-sm;
+  }
+
+  &__message {
+    margin-top: $spacer-base;
+  }
+}
+.q-btn--rectangle{
+  border-radius: 10px ;
+
+}
+.q-btn--outline:before{
+  border-color: $grey-7;
+}
+.q-field--outlined .q-field__control{
+  border-radius: 10px;
+}
+
+.bg-v-pagination-active {
+  border-radius: $border-radius;
+  margin-left: 4px;
+  margin-right: 4px;
+  background: $grey-8;
+  border: 1px solid $grey-8;
+  user-select: none;
+}
+
+.pagination-btn{
+  border-radius: $border-radius;
+  border: 1px solid $grey-8;
+  margin-left: 4px;
+  padding: 0 10px;
+  margin-right: 4px;
+}
+
+/* Стили для полосы прокрутки */
+::-webkit-scrollbar {
+  width: 8px;  /* ширина вертикальной полосы прокрутки */
+  height: 8px; /* высота горизонтальной полосы прокрутки */
+}
+
+/* Стили для ползунка полосы прокрутки */
+::-webkit-scrollbar-thumb {
+  background-color: $grey-7; /* цвет ползунка */
+  border-radius: 10px; /* скругление углов ползунка */
+}
+
+/* Стили при наведении на ползунок */
+::-webkit-scrollbar-thumb:hover {
+  background-color: $blue-9; /* цвет ползунка при наведении */
+}
+
+/* Стили для фона полосы прокрутки */
+::-webkit-scrollbar-track {
+  background-color: $grey-8; /* фон полосы прокрутки */
+  border-radius: 10px; /* скругление углов полосы */
+}
+
+.q-drawer--left.q-drawer--bordered {
+  border-right: 1px solid #64acd5;
+}
+
