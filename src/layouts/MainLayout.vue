@@ -41,11 +41,7 @@
       </div>
 
       <q-list>
-        <q-item-label
-          header
-        >
-          Управление
-        </q-item-label>
+        <q-item-label header> Управление </q-item-label>
 
         <q-item clickable v-ripple to="/exercises">
           <q-item-section avatar>
@@ -74,6 +70,13 @@
           </q-item-section>
           <q-item-section>Справочники</q-item-section>
         </q-item>
+
+        <q-item clickable v-ripple to="/actuals">
+          <q-item-section avatar>
+            <q-icon name="window" />
+          </q-item-section>
+          <q-item-section>Актуальные</q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
@@ -84,55 +87,55 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useAuthStore } from 'src/stores/auth';
-import { useQuasar } from 'quasar';
-import EssentialLink, { EssentialLinkProps } from 'components/EssentialLink.vue';
-import logoUrl from '../assets/svg/Cover.svg';
+import { ref, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useAuthStore } from 'src/stores/auth'
+import { useQuasar } from 'quasar'
+import EssentialLink, { EssentialLinkProps } from 'components/EssentialLink.vue'
+import logoUrl from '../assets/svg/Cover.svg'
 
 defineOptions({
-  name: 'MainLayout'
-});
+  name: 'MainLayout',
+})
 
-const $q = useQuasar();
-const router = useRouter();
-const route = useRoute();
-const authStore = useAuthStore();
+const $q = useQuasar()
+const router = useRouter()
+const route = useRoute()
+const authStore = useAuthStore()
 
-const leftDrawerOpen = ref(false);
+const leftDrawerOpen = ref(false)
 
 const currentTitle = computed(() => {
-  const path = route.path;
+  const path = route.path
   const titles: { [key: string]: string } = {
     '/exercises': 'Список упражнений',
     '/exercises/create': 'Создание упражнения',
     '/modules': 'Список модулей',
     '/marathons': 'Список марафонов',
-    '/marathon-categories': 'Категории марафонов'
-  };
+    '/marathon-categories': 'Категории марафонов',
+  }
 
   // Для страницы редактирования упражнения
   if (path.match(/^\/exercises\/\d+\/edit$/)) {
-    return 'Редактирование упражнения';
+    return 'Редактирование упражнения'
   }
 
-  return titles[path] || 'Aivy';
-});
+  return titles[path] || 'Aivy'
+})
 
 function toggleLeftDrawer() {
-  leftDrawerOpen.value = !leftDrawerOpen.value;
+  leftDrawerOpen.value = !leftDrawerOpen.value
 }
 
 async function handleLogout() {
   try {
-    await authStore.logout();
-    router.push('/login');
+    await authStore.logout()
+    router.push('/login')
   } catch (error) {
     $q.notify({
       type: 'negative',
-      message: 'Ошибка при выходе из системы'
-    });
+      message: 'Ошибка при выходе из системы',
+    })
   }
 }
 
@@ -141,36 +144,36 @@ const linksList: EssentialLinkProps[] = [
     title: 'Упражнения',
     caption: 'Создание и редактирование упражнений',
     icon: 'fitness_center',
-    link: '/exercises'
+    link: '/exercises',
   },
   {
     title: 'Модули',
     caption: 'Создание и редактирование модулей',
     icon: 'view_module',
-    link: '/modules'
+    link: '/modules',
   },
   {
     title: 'Марафоны',
     caption: 'Управление марафонами',
     icon: 'event_note',
-    link: '/marathons'
+    link: '/marathons',
   },
   {
     title: 'Категории марафонов',
     caption: 'Создание и редактирование категорий',
     icon: 'category',
-    link: '/marathon-categories'
-  }
-];
+    link: '/marathon-categories',
+  },
+]
 </script>
 
 <style lang="scss">
 .aivy-gradient {
-  background: linear-gradient(90deg, #60DACA 0%, #64ACD5 100%) !important;
+  background: linear-gradient(90deg, #60daca 0%, #64acd5 100%) !important;
 }
 
 .aivy-gradient-reversed {
-  background: linear-gradient(270deg, #60DACA 0%, #64ACD5 100%) !important;
+  background: linear-gradient(270deg, #60daca 0%, #64acd5 100%) !important;
 }
 
 .drawer-logo {
@@ -178,7 +181,7 @@ const linksList: EssentialLinkProps[] = [
   @extend .aivy-gradient;
   width: 100%;
   padding: 0;
-  
+
   img {
     width: 100%;
     height: auto;
@@ -198,7 +201,9 @@ const linksList: EssentialLinkProps[] = [
 
 // Глобальные стили для кнопок
 .q-btn {
-  &:not(.q-btn--flat):not(.q-btn--outline):not(.q-btn--unelevated):not(.q-header .q-btn) {
+  &:not(.q-btn--flat):not(.q-btn--outline):not(.q-btn--unelevated):not(
+      .q-header .q-btn
+    ) {
     @extend .aivy-gradient;
     color: white !important;
     border: none;

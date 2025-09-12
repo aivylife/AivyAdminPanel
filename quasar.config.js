@@ -8,7 +8,7 @@
 // Configuration for your app
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
 
-import { configure } from 'quasar/wrappers';
+import { configure } from 'quasar/wrappers'
 
 export default configure(function (/* ctx */) {
   return {
@@ -18,7 +18,7 @@ export default configure(function (/* ctx */) {
       // exclude: [],
       // rawOptions: {},
       warnings: true,
-      errors: true
+      errors: true,
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
@@ -27,14 +27,10 @@ export default configure(function (/* ctx */) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: [
-      'axios'
-    ],
+    boot: ['axios'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
-    css: [
-      'app.scss'
-    ],
+    css: ['app.scss'],
 
     // https://github.com/quasarframework/quasar/tree/dev/extras
     extras: [
@@ -55,7 +51,7 @@ export default configure(function (/* ctx */) {
       publicPath: '/adminpanel/',
       target: {
         browser: ['es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1'],
-        node: 'node16'
+        node: 'node16',
       },
 
       vueRouterMode: 'history', // available values: 'hash', 'history'
@@ -64,7 +60,7 @@ export default configure(function (/* ctx */) {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
     devServer: {
       open: true,
-      port: 8080
+      port: 8080,
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
@@ -82,7 +78,7 @@ export default configure(function (/* ctx */) {
       // directives: [],
 
       // Quasar plugins
-      plugins: ['Notify']
+      plugins: ['Notify', 'Dialog'],
     },
 
     // animations: 'all', // --- includes all animations
@@ -118,8 +114,8 @@ export default configure(function (/* ctx */) {
       // (gets superseded if process.env.PORT is specified at runtime)
 
       middlewares: [
-        'render' // keep this as last one
-      ]
+        'render', // keep this as last one
+      ],
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/developing-pwa/configuring-pwa
@@ -143,7 +139,7 @@ export default configure(function (/* ctx */) {
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-capacitor-apps/configuring-capacitor
     capacitor: {
-      hideSplashscreen: true
+      hideSplashscreen: true,
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/configuring-electron
@@ -157,13 +153,11 @@ export default configure(function (/* ctx */) {
 
       packager: {
         // https://github.com/electron-userland/electron-packager/blob/master/docs/api.md#options
-
         // OS X / Mac App Store
         // appBundleId: '',
         // appCategoryType: '',
         // osxSign: '',
         // protocol: 'myapp://path',
-
         // Windows only
         // win32metadata: { ... }
       },
@@ -171,18 +165,16 @@ export default configure(function (/* ctx */) {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: 'aivy-admin-panel'
-      }
+        appId: 'aivy-admin-panel',
+      },
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-browser-extensions/configuring-bex
     bex: {
-      contentScripts: [
-        'my-content-script'
-      ],
+      contentScripts: ['my-content-script'],
 
       // extendBexScriptsConf (esbuildConf) {}
       // extendBexManifestJson (json) {}
-    }
-  };
-}); 
+    },
+  }
+})
