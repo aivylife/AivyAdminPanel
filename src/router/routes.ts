@@ -79,6 +79,15 @@ const routes: RouteRecordRaw[] = [
         path: 'actuals/edit/:id',
         component: () => import('components/ActualsForm.vue'),
       },
+      { path: 'banners', component: () => import('pages/BannersListPage.vue') },
+      {
+        path: 'banners/new',
+        component: () => import('components/BannersForm.vue'),
+      },
+      {
+        path: 'banners/edit/:id',
+        component: () => import('components/BannersForm.vue'),
+      },
     ],
   },
   {

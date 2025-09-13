@@ -73,9 +73,16 @@
 
         <q-item clickable v-ripple to="/actuals">
           <q-item-section avatar>
-            <q-icon name="window" />
+            <q-icon name="slideshow" />
           </q-item-section>
           <q-item-section>Актуальные</q-item-section>
+        </q-item>
+
+        <q-item clickable v-ripple to="/banners">
+          <q-item-section avatar>
+            <q-icon name="crop_original" />
+          </q-item-section>
+          <q-item-section>Баннера</q-item-section>
         </q-item>
       </q-list>
     </q-drawer>

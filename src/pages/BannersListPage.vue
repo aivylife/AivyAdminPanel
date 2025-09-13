@@ -1,24 +1,24 @@
 <template>
   <q-page padding>
     <div class="row justify-between items-center q-mb-lg">
-      <div class="text-h4">Актуальные</div>
+      <div class="text-h4">Баннера</div>
       <q-btn
-        label="Создать актуальное"
+        label="Создать баннер"
         color="primary"
         icon="add"
-        @click="router.push('/actuals/new')"
+        @click="router.push('/banners/new')"
         class="q-px-md"
       />
     </div>
 
     <q-card>
       <q-card-section class="row justify-between items-center">
-        <div class="text-h6">Список актуальных</div>
+        <div class="text-h6">Список баннеров</div>
       </q-card-section>
       <q-separator />
       <q-card-section>
         <q-table
-          :rows="actualStories"
+          :rows="banners"
           :columns="columns"
           row-key="id"
           :loading="loading"
@@ -28,7 +28,7 @@
           wrap-cells
           v-model:pagination="pagination"
           @request="onRequest"
-          @row-click="(evt, row) => editActualStory(row.id)"
+          @row-click="(evt, row) => editBanner(row.id)"
         >
           <template v-slot:body-cell-actions="props">
             <q-td :props="props" class="q-gutter-sm">
@@ -39,7 +39,7 @@
                   flat
                   color="primary"
                   icon="edit"
-                  @click.stop="editActualStory(props.row.id)"
+                  @click.stop="editBanner(props.row.id)"
                 >
                   <q-tooltip>Редактировать</q-tooltip>
                 </q-btn>
@@ -50,7 +50,7 @@
                   flat
                   color="negative"
                   icon="delete"
-                  @click.stop="confirmDeleteActualStory(props.row.id)"
+                  @click.stop="confirmDeleteBanner(props.row.id)"
                 >
                   <q-tooltip>Удалить</q-tooltip>
                 </q-btn>
@@ -63,12 +63,12 @@
               class="full-width row flex-center text-grey q-gutter-sm q-pa-lg"
             >
               <q-icon size="2em" name="sentiment_dissatisfied" />
-              <span>Нет доступных актуальных</span>
+              <span>Нет доступных баннеров</span>
               <q-btn
-                label="Создать первое актуальное"
+                label="Создать первый баннер"
                 color="primary"
                 no-caps
-                @click="router.push('/actuals/new')"
+                @click="router.push('/banners/new')"
                 class="q-ml-md"
                 size="sm"
               />
@@ -88,12 +88,12 @@ import { api } from 'src/boot/axios'
 
 const router = useRouter()
 const $q = useQuasar()
-const actualStories = ref([])
+const banners = ref([])
 const loading = ref(false)
 
 const pagination = ref({
-  sortBy: 'createdAt' as string | null,
-  descending: true,
+  sortBy: 'order' as string | null,
+  descending: false,
   page: 1,
   rowsPerPage: 10,
   rowsNumber: 0,
@@ -126,11 +126,11 @@ const columns: QTableProps['columns'] = [
     format: (val: string) => new Date(val).toLocaleDateString('ru-RU'),
   },
   {
-    name: 'name',
+    name: 'order',
     required: true,
-    label: 'Название',
+    label: 'Порядок',
     align: 'left',
-    field: 'name',
+    field: 'order',
     sortable: true,
   },
 ]
@@ -140,7 +140,6 @@ const onRequest = async (props: { pagination: QTableProps['pagination'] }) => {
     page = 1,
     rowsPerPage = 10,
     sortBy = null,
-    descending = false,
   } = props.pagination ?? pagination.value
 
   const params: Record<string, any> = {
@@ -160,7 +159,7 @@ const onRequest = async (props: { pagination: QTableProps['pagination'] }) => {
       } else {
         // Иначе меняем на desc
         pagination.value.descending = true
-        params.order = JSON.stringify({ [sortBy]: 'DESC' })
+        params.order = JSON.stringify({ [sortBy]: 'ASC' })
       }
     } else {
       // Если кликнули на другую колонку, начинаем с asc
@@ -182,42 +181,44 @@ const onRequest = async (props: { pagination: QTableProps['pagination'] }) => {
   loading.value = true
 
   try {
-    const response = await api.get('/api/actual-stories', { params })
-    actualStories.value = response.data.data || response.data
+    const response = await api.get('/api/story', {
+      params: { isBanner: true, ...params },
+    })
 
+    banners.value = response.data.data || response.data
     pagination.value.rowsNumber =
       response.data.pagination?.totalElements || response.data.total || 0
   } catch (error) {
-    $q.notify({ type: 'negative', message: 'Ошибка при загрузке актуальных' })
+    $q.notify({ type: 'negative', message: 'Ошибка при загрузке баннеров' })
   } finally {
     loading.value = false
   }
 }
 
-const editActualStory = (id: number) => {
-  router.push(`/actuals/edit/${id}`)
+const editBanner = (id: number) => {
+  router.push(`/banners/edit/${id}`)
 }
 
-const confirmDeleteActualStory = (id: number) => {
+const confirmDeleteBanner = (id: number) => {
   $q.dialog({
     title: 'Подтверждение',
-    message: 'Вы действительно хотите удалить это актуальное?',
+    message: 'Вы действительно хотите удалить этот баннер?',
     cancel: true,
     persistent: true,
   }).onOk(async () => {
     try {
-      await api.delete(`/api/actual-stories/${id}`)
+      await api.delete(`/api/story/${id}`)
 
       $q.notify({
         type: 'positive',
-        message: 'Актуальное успешно удалено',
+        message: 'Баннер успешно удален',
       })
 
       onRequest({ pagination: pagination.value })
     } catch (error) {
       $q.notify({
         type: 'negative',
-        message: 'Ошибка при удалении актуального',
+        message: 'Ошибка при удалении баннера',
       })
     }
   })

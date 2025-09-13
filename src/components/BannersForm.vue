@@ -2,14 +2,14 @@
   <q-page padding>
     <div class="row justify-between items-center q-mb-lg">
       <div class="text-h4">
-        {{ isEdit ? 'Редактировать' : 'Создать' }} актуальное
+        {{ isEdit ? 'Редактировать' : 'Создать' }} баннер
       </div>
       <q-btn
         flat
         color="grey-8"
         icon="arrow_back"
         label="Назад"
-        @click="router.push('/actuals')"
+        @click="router.push('/banners')"
         class="q-px-md"
       />
     </div>
@@ -17,77 +17,30 @@
     <q-card class="exercise-form-card q-pa-md">
       <q-card-section>
         <q-form @submit="onSubmit" class="q-gutter-md">
-          <h6 class="text-h6">Актуальное</h6>
+          <div class="story-rows">
+            <q-input
+              label="Порядок"
+              type="number"
+              v-model.number="formData.order"
+              :rules="[(val) => val > 0 || 'Должен быть больше 0']"
+              outlined
+              bg-color="white"
+            />
 
-          <q-input
-            v-model="formData.name"
-            label="Название"
-            :rules="[(val) => Boolean(val) || 'Обязательное поле']"
-            outlined
-            bg-color="white"
-          />
-
-          <div class="col-12 col-md-4">
-            <FileUploader
-              v-model="formData.preview"
-              label="Обложка актуального"
-              accept="image/*"
-              icon="image"
-              :rules="[(val) => Boolean(val) || 'Обязательное поле']"
+            <q-input
+              label="Ссылка"
+              v-model="formData.link"
+              outlined
+              bg-color="white"
             />
           </div>
 
-          <q-separator class="gradient-separator q-my-xs" />
-
-          <h6 class="text-h6">Сторис</h6>
-
-          <div style="display: flex; flex-direction: column; gap: 20px">
-            <div
-              v-for="(story, index) in formData.stories"
-              :key="index"
-              class="story-card"
-            >
-              <div class="story-rows">
-                <q-input
-                  label="Порядок"
-                  type="number"
-                  v-model.number="story.order"
-                  :rules="[(val) => val > 0 || 'Должен быть больше 0']"
-                  outlined
-                  bg-color="white"
-                />
-
-                <q-input
-                  label="Ссылка"
-                  v-model="story.link"
-                  outlined
-                  bg-color="white"
-                />
-
-                <q-btn
-                  flat
-                  label="Удалить"
-                  color="negative"
-                  @click="onDeleteStory(story.id, index)"
-                />
-              </div>
-
-              <FileUploader
-                v-model="story.file"
-                label="Изображение/видео"
-                accept="image/*,video/*"
-                icon="image"
-                :rules="[(val) => Boolean(val) || 'Обязательное поле']"
-              />
-            </div>
-          </div>
-
-          <q-btn
-            class="q-mt-md"
-            label="Добавить сторис"
-            @click="onAddStory"
-            color="primary"
-            size="sm"
+          <FileUploader
+            v-model="formData.file"
+            label="Изображение"
+            accept="image/*"
+            icon="image"
+            :rules="[(val) => Boolean(val) || 'Обязательное поле']"
           />
 
           <q-separator class="q-my-lg" />
@@ -99,7 +52,7 @@
               color="grey-7"
               flat
               class="q-px-md"
-              @click="router.push('/actuals')"
+              @click="router.push('/banners')"
             />
             <q-btn
               label="Сохранить"
@@ -129,18 +82,10 @@ import IconSelector from './IconSelector.vue'
 import CategorySelector from './CategorySelector.vue'
 import FormatSelector from './FormatSelector.vue'
 import { api } from 'src/boot/axios'
-import { Actuals, Story } from '@/types/story'
-import type { File } from '@/models/exercise'
-
-type ActualsForm = {
-  id?: number
-  name: string
-  stories: Partial<Story>[]
-  preview: File | null
-}
+import { Story } from '@/types/story'
 
 export default defineComponent({
-  name: 'ActualsForm',
+  name: 'BannersForm',
 
   components: {
     FileUploader,
@@ -157,92 +102,17 @@ export default defineComponent({
     const loading = ref(false)
     const isEdit = ref(false)
 
-    const formData = ref<ActualsForm>({
-      name: '',
-      stories: [
-        {
-          order: 1,
-          link: '',
-          file: null,
-        },
-      ],
-      preview: null,
+    const formData = ref<Partial<Story>>({
+      title: '',
+      description: '',
+      positionText: '',
+      group: '',
+      isReleased: true,
+      isBanner: true,
+      order: 1,
+      link: '',
+      file: null,
     })
-
-    const onAddStory = () => {
-      formData.value.stories.push({
-        order: formData.value.stories.length + 1,
-        link: '',
-        file: null,
-      })
-    }
-
-    const onDeleteStory = async (id?: number, index?: number) => {
-      if (!id) {
-        formData.value.stories.splice(index!, 1)
-        return
-      }
-
-      $q.dialog({
-        title: 'Подтверждение',
-        message: 'Вы действительно хотите удалить эту сторис?',
-        cancel: true,
-        persistent: true,
-      }).onOk(async () => {
-        try {
-          await api.delete(`/api/story/${id}`)
-
-          formData.value.stories = formData.value.stories.filter(
-            (story) => story.id !== id
-          )
-
-          $q?.notify({
-            type: 'positive',
-            message: 'Сторис успешно удалена',
-          })
-        } catch (error) {
-          console.error('Error deleting story:', error)
-
-          $q?.notify({
-            type: 'negative',
-            message: 'Ошибка при удалении сторис',
-          })
-        }
-      })
-    }
-
-    // Функция для загрузки видео контента по запросу
-    // const loadVideoContent = async () => {
-    //   if (
-    //     formData.value.typeId === 1 &&
-    //     formData.value.content?.data?.VIDEO?.file
-    //   ) {
-    //     try {
-    //       videoContentPreviewUrl.value = await getFileUrlPreview(
-    //         formData.value.content.data.VIDEO.file
-    //       )
-    //     } catch (err) {
-    //       console.error('Error loading video content:', err)
-    //     }
-    //   }
-    // }
-
-    // Функция для загрузки аудио контента по запросу
-    // const loadAudioContent = async (index: number) => {
-    //   if (
-    //     formData.value.typeId === 2 &&
-    //     formData.value.content?.data?.AUDIO?.content?.[index]?.file
-    //   ) {
-    //     try {
-    //       const url = await getFileUrlPreview(
-    //         formData.value.content.data.AUDIO.content[index].file
-    //       )
-    //       audioPreviewUrls.value[index] = url
-    //     } catch (err) {
-    //       console.error('Error loading audio content:', err)
-    //     }
-    //   }
-    // }
 
     onMounted(async () => {
       const id = route.params.id
@@ -253,24 +123,29 @@ export default defineComponent({
       isEdit.value = true
 
       try {
-        const response = await api.get<Actuals>(`/api/actual-stories/${id}`)
-        const actualStory = response.data
+        const response = await api.get<Story>(`/api/story/${id}`, {
+          params: { isBanner: true },
+        })
+        const banner = response.data
 
         formData.value = {
-          id: actualStory.id,
-          name: actualStory.name,
-          stories:
-            actualStory.stories.sort(
-              (a, b) => (a.order || 0) - (b.order || 0)
-            ) || [],
-          preview: actualStory.preview || null,
+          id: banner.id,
+          title: banner.title,
+          description: banner.description,
+          positionText: banner.positionText,
+          group: banner.group,
+          isReleased: banner.isReleased,
+          isBanner: banner.isBanner,
+          order: banner.order,
+          link: banner.link,
+          file: banner.file,
         }
       } catch (error) {
-        console.error('Error loading actuals:', error)
+        console.error('Error loading story:', error)
 
         $q?.notify({
           type: 'negative',
-          message: 'Ошибка при загрузке актуальных',
+          message: 'Ошибка при загрузке баннера',
         })
       } finally {
         loading.value = false
@@ -280,82 +155,44 @@ export default defineComponent({
     const onSubmit = async () => {
       loading.value = true
 
+      const data: Partial<Story> = {
+        title: formData.value.title || '',
+        description: formData.value.description || '',
+        positionText: formData.value.positionText || '',
+        group: formData.value.group || '',
+        isReleased: formData.value.isReleased || true,
+        isBanner: formData.value.isBanner || true,
+        order: formData.value.order || 1,
+        link: formData.value.link || '',
+        file: formData.value.file || null,
+        fileId: formData.value.file?.id || null,
+        previewId: null,
+      }
+
       try {
-        const { id, name, stories, preview } = formData.value
-
         if (isEdit.value) {
-          for await (const story of stories || []) {
-            if (story.id) {
-              await api.patch(`/api/story/${story.id}`, story)
-            } else {
-              const data: Partial<Story> = {
-                title: '',
-                description: '',
-                positionText: '',
-                group: '',
-                isReleased: true,
-                isBanner: false,
-                order: story.order,
-                link: story.link,
-                fileId: story.file?.id || null,
-                previewId: preview?.id || null,
-              }
-
-              const storyResponse = await api.post<Story>('/api/story', data)
-              story.id = storyResponse.data.id
-            }
-          }
-
-          await api.patch(`/api/actual-stories/${id}`, {
-            name,
-            preview,
-            stories: stories.map((story) => ({ id: story.id })),
-          })
+          await api.patch(`/api/story/${route.params.id}`, data)
 
           $q?.notify({
             type: 'positive',
-            message: 'Актуальное успешно обновлено',
+            message: 'Баннер успешно обновлен',
           })
         } else {
-          const createdStories: Story[] = []
-
-          for await (const story of stories || []) {
-            const data: Partial<Story> = {
-              title: '',
-              description: '',
-              positionText: '',
-              group: '',
-              isReleased: true,
-              isBanner: false,
-              order: story.order,
-              link: story.link,
-              fileId: story.file?.id || null,
-              previewId: preview?.id || null,
-            }
-
-            const storyResponse = await api.post<Story>('/api/story', data)
-            createdStories.push(storyResponse.data)
-          }
-
-          await api.post('/api/actual-stories', {
-            name,
-            preview,
-            stories: createdStories.map((story) => ({ id: story.id })),
-          })
+          await api.post<Story>('/api/story', data)
 
           $q?.notify({
             type: 'positive',
-            message: 'Актуальное успешно создано',
+            message: 'Баннер успешно создан',
           })
         }
 
-        router.push('/actuals')
+        router.push('/banners')
       } catch (error) {
-        console.error('Error saving exercise:', error)
+        console.error('Error saving banner:', error)
 
         $q?.notify({
           type: 'negative',
-          message: 'Ошибка при сохранении актуального',
+          message: 'Ошибка при сохранении баннера',
         })
       } finally {
         loading.value = false
@@ -368,8 +205,6 @@ export default defineComponent({
       loading,
       isEdit,
       onSubmit,
-      onAddStory,
-      onDeleteStory,
     }
   },
 })
