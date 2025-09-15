@@ -37,8 +37,8 @@
 
           <FileUploader
             v-model="formData.file"
-            label="Изображение"
-            accept="image/*"
+            label="Используйте изображение в формате .webp"
+            accept="image/webp"
             icon="image"
             :rules="[(val) => Boolean(val) || 'Обязательное поле']"
           />

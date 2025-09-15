@@ -119,6 +119,10 @@
     >
       <q-icon :name="icon" size="48px" color="grey-5" class="q-mb-sm" />
       <div>Перетащите файл сюда или нажмите для выбора</div>
+      <div>
+        Используйте форматы: .webp для изображений, .mp4(hevc) для видео, .aac
+        для аудио
+      </div>
     </div>
   </div>
 </template>
@@ -126,7 +130,6 @@
 <script lang="ts">
 import { defineComponent, ref, watch, computed, PropType } from 'vue'
 import { useQuasar } from 'quasar'
-import { api } from 'src/boot/axios'
 import { ValidationRule } from 'quasar'
 
 export default defineComponent({

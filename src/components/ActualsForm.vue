@@ -30,8 +30,8 @@
           <div class="col-12 col-md-4">
             <FileUploader
               v-model="formData.preview"
-              label="Обложка актуального"
-              accept="image/*"
+              label="Обложка актуального, используйте изображение в формате .webp"
+              accept="image/webp"
               icon="image"
               :rules="[(val) => Boolean(val) || 'Обязательное поле']"
             />

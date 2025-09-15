@@ -1,7 +1,9 @@
 <template>
   <q-page padding>
     <div class="row justify-between items-center q-mb-lg">
-      <div class="text-h4">{{ isEdit ? 'Редактировать' : 'Создать' }} марафон</div>
+      <div class="text-h4">
+        {{ isEdit ? 'Редактировать' : 'Создать' }} марафон
+      </div>
       <q-btn
         flat
         color="grey-8"
@@ -24,7 +26,7 @@
                   <q-input
                     v-model="formData.title"
                     label="Название"
-                    :rules="[val => !!val || 'Обязательное поле']"
+                    :rules="[(val) => !!val || 'Обязательное поле']"
                     outlined
                     bg-color="white"
                   />
@@ -34,7 +36,9 @@
                     v-model.number="formData.price"
                     label="Цена"
                     type="number"
-                    :rules="[val => val >= 0 || 'Цена не может быть отрицательной']"
+                    :rules="[
+                      (val) => val >= 0 || 'Цена не может быть отрицательной',
+                    ]"
                     outlined
                     bg-color="white"
                   />
@@ -47,7 +51,10 @@
                     v-model.number="formData.rating"
                     label="Рейтинг"
                     type="number"
-                    :rules="[val => val >= 0 || 'Рейтинг не может быть отрицательным']"
+                    :rules="[
+                      (val) =>
+                        val >= 0 || 'Рейтинг не может быть отрицательным',
+                    ]"
                     outlined
                     bg-color="white"
                   />
@@ -57,7 +64,9 @@
                     v-model.number="formData.newPrice"
                     label="Новая цена"
                     type="number"
-                    :rules="[val => val >= 0 || 'Цена не может быть отрицательной']"
+                    :rules="[
+                      (val) => val >= 0 || 'Цена не может быть отрицательной',
+                    ]"
                     outlined
                     bg-color="white"
                   />
@@ -70,7 +79,10 @@
                     v-model.number="formData.durationDays"
                     label="Длительность (дни)"
                     type="number"
-                    :rules="[val => val >= 0 || 'Длительность не может быть отрицательной']"
+                    :rules="[
+                      (val) =>
+                        val >= 0 || 'Длительность не может быть отрицательной',
+                    ]"
                     outlined
                     bg-color="white"
                   />
@@ -80,7 +92,10 @@
                     v-model.number="formData.durationMinutes"
                     label="Длительность (минуты)"
                     type="number"
-                    :rules="[val => val >= 0 || 'Длительность не может быть отрицательной']"
+                    :rules="[
+                      (val) =>
+                        val >= 0 || 'Длительность не может быть отрицательной',
+                    ]"
                     outlined
                     bg-color="white"
                   />
@@ -90,7 +105,11 @@
                     v-model.number="formData.accessDuration"
                     label="Доступ (дни)"
                     type="number"
-                    :rules="[val => val >= 0 || 'Длительность доступа не может быть отрицательной']"
+                    :rules="[
+                      (val) =>
+                        val >= 0 ||
+                        'Длительность доступа не может быть отрицательной',
+                    ]"
                     outlined
                     bg-color="white"
                   />
@@ -103,7 +122,10 @@
                     v-model.number="formData.charityCount"
                     label="Количество благотворительных мест"
                     type="number"
-                    :rules="[val => val >= 0 || 'Количество не может быть отрицательным']"
+                    :rules="[
+                      (val) =>
+                        val >= 0 || 'Количество не может быть отрицательным',
+                    ]"
                     outlined
                     bg-color="white"
                   />
@@ -124,7 +146,7 @@
                     v-model="formData.categoryId"
                     :options="categoryOptions"
                     label="Категория"
-                    :rules="[val => !!val || 'Обязательное поле']"
+                    :rules="[(val) => !!val || 'Обязательное поле']"
                     outlined
                     emit-value
                     map-options
@@ -138,7 +160,7 @@
                     v-model="formData.directionId"
                     :options="directionOptions"
                     label="Направление"
-                    :rules="[val => !!val || 'Обязательное поле']"
+                    :rules="[(val) => !!val || 'Обязательное поле']"
                     outlined
                     emit-value
                     map-options
@@ -152,7 +174,7 @@
                     v-model="formData.formatId"
                     :options="formatOptions"
                     label="Формат"
-                    :rules="[val => !!val || 'Обязательное поле']"
+                    :rules="[(val) => !!val || 'Обязательное поле']"
                     outlined
                     emit-value
                     map-options
@@ -283,10 +305,10 @@
                   <FileUploader
                     v-model="formData.photo"
                     :initial-file="formData.photo"
-                    label="Фото марафона *"
-                    accept="image/*"
+                    label="Фото марафона, используйте изображение в формате .webp"
+                    accept="image/webp"
                     icon="photo"
-                    :rules="[val => !!val || 'Фото обязательно']"
+                    :rules="[(val) => !!val || 'Фото обязательно']"
                   />
                 </div>
               </div>
@@ -310,7 +332,14 @@
               </div>
             </q-form>
           </q-card-section>
-          <q-inner-loading :showing="loading || loadingCategories || loadingDirections || loadingFormats">
+          <q-inner-loading
+            :showing="
+              loading ||
+              loadingCategories ||
+              loadingDirections ||
+              loadingFormats
+            "
+          >
             <q-spinner size="50px" color="primary" />
           </q-inner-loading>
         </q-card>
@@ -322,9 +351,15 @@
           <q-card-section>
             <div class="text-h6 q-mb-md">Модули марафона</div>
             <q-list separator>
-              <q-item v-for="module in sortedModules" :key="module.id" class="q-pa-sm">
+              <q-item
+                v-for="module in sortedModules"
+                :key="module.id"
+                class="q-pa-sm"
+              >
                 <q-item-section>
-                  <q-item-label class="text-weight-medium">{{ module.title }}</q-item-label>
+                  <q-item-label class="text-weight-medium">{{
+                    module.title
+                  }}</q-item-label>
                   <q-item-label caption>
                     Неделя {{ module.weekNumber }} • {{ module.duration }} дней
                   </q-item-label>
@@ -370,7 +405,11 @@
           <MarathonModuleForm
             :module-id="editingModuleId"
             :marathon-id="formData.id || 0"
-            :model-value="editingModuleId ? formData.modules.find(m => m.id === editingModuleId) : null"
+            :model-value="
+              editingModuleId
+                ? formData.modules.find((m) => m.id === editingModuleId)
+                : null
+            "
             :hide-marathon-field="true"
             @submit="handleModuleSubmit"
             @cancel="showModuleForm = false"
@@ -382,53 +421,52 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, computed } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { useQuasar } from 'quasar';
-import { api } from 'src/boot/axios';
-import FileUploader from './FileUploader.vue';
-import MarathonModuleForm from './MarathonModuleForm.vue';
-import MarkdownEditor from './MarkdownEditor.vue';
+import { defineComponent, ref, onMounted, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { useQuasar } from 'quasar'
+import { api } from 'src/boot/axios'
+import FileUploader from './FileUploader.vue'
+import MarathonModuleForm from './MarathonModuleForm.vue'
+import MarkdownEditor from './MarkdownEditor.vue'
 
 interface MarathonFormData {
-  id?: number;
-  title: string;
-  description: string;
-  photoId?: number;
+  id?: number
+  title: string
+  description: string
+  photoId?: number
   photo?: {
-    id: number;
-    name: string;
-    uuidName: string;
-    path: string;
-  };
-  price: number;
-  newPrice: number;
-  durationDays: number;
-  durationMinutes: number;
-  marketingText: string;
-  sellingText: string;
-  rating: number;
-  accessDuration: number;
-  isReleased: boolean;
-  charityCount: number;
-  categoryId: number;
-  directionId: number;
-  formatId: number;
-  modules: any[];
-  targetText?: string;
-  problemText?: string;
-  solutionText?: string;
-  resultsText?: string;
-  longTermChangesText?: string;
-  suitableText?: string;
-  participationFormatText?: string;
+    id: number
+    name: string
+    uuidName: string
+    path: string
+  }
+  price: number
+  newPrice: number
+  durationDays: number
+  durationMinutes: number
+  marketingText: string
+  sellingText: string
+  rating: number
+  accessDuration: number
+  isReleased: boolean
+  charityCount: number
+  categoryId: number
+  directionId: number
+  formatId: number
+  modules: any[]
+  targetText?: string
+  problemText?: string
+  solutionText?: string
+  resultsText?: string
+  longTermChangesText?: string
+  suitableText?: string
+  participationFormatText?: string
 }
 
 interface FilterOption {
-  label: string;
-  value: number;
+  label: string
+  value: number
 }
-
 
 export default defineComponent({
   name: 'MarathonForm',
@@ -440,16 +478,16 @@ export default defineComponent({
   },
 
   setup() {
-    const $q = useQuasar();
-    const router = useRouter();
-    const route = useRoute();
-    const loading = ref(false);
-    const loadingCategories = ref(false);
-    const loadingDirections = ref(false);
-    const loadingFormats = ref(false);
-    const isEdit = computed(() => !!route.params.id);
-    const showModuleForm = ref(false);
-    const editingModuleId = ref<number | undefined>(undefined);
+    const $q = useQuasar()
+    const router = useRouter()
+    const route = useRoute()
+    const loading = ref(false)
+    const loadingCategories = ref(false)
+    const loadingDirections = ref(false)
+    const loadingFormats = ref(false)
+    const isEdit = computed(() => !!route.params.id)
+    const showModuleForm = ref(false)
+    const editingModuleId = ref<number | undefined>(undefined)
 
     const formData = ref<MarathonFormData>({
       title: '',
@@ -469,83 +507,87 @@ export default defineComponent({
       categoryId: 0,
       directionId: 0,
       formatId: 0,
-      modules: []
-    });
+      modules: [],
+    })
 
-    const categoryOptions = ref<FilterOption[]>([]);
-    const directionOptions = ref<FilterOption[]>([]);
-    const formatOptions = ref<FilterOption[]>([]);
+    const categoryOptions = ref<FilterOption[]>([])
+    const directionOptions = ref<FilterOption[]>([])
+    const formatOptions = ref<FilterOption[]>([])
 
     const sortedModules = computed(() => {
-      return [...formData.value.modules].sort((a, b) => a.weekNumber - b.weekNumber);
-    });
+      return [...formData.value.modules].sort(
+        (a, b) => a.weekNumber - b.weekNumber
+      )
+    })
 
     const fetchCategories = async () => {
-      loadingCategories.value = true;
+      loadingCategories.value = true
       try {
-        const response = await api.get('/api/marathon-filter/category');
+        const response = await api.get('/api/marathon-filter/category')
         categoryOptions.value = (response.data.data || []).map((item: any) => ({
           label: item.name,
-          value: item.id
-        }));
+          value: item.id,
+        }))
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error('Error fetching categories:', error)
         $q.notify({
           type: 'negative',
-          message: 'Ошибка при загрузке категорий'
-        });
+          message: 'Ошибка при загрузке категорий',
+        })
       } finally {
-        loadingCategories.value = false;
+        loadingCategories.value = false
       }
-    };
+    }
 
     const fetchDirections = async () => {
-      loadingDirections.value = true;
+      loadingDirections.value = true
       try {
-        const response = await api.get('/api/marathon-filter/direction');
-        directionOptions.value = (response.data.data || []).map((item: any) => ({
-          label: item.name,
-          value: item.id
-        }));
+        const response = await api.get('/api/marathon-filter/direction')
+        directionOptions.value = (response.data.data || []).map(
+          (item: any) => ({
+            label: item.name,
+            value: item.id,
+          })
+        )
       } catch (error) {
-        console.error('Error fetching directions:', error);
+        console.error('Error fetching directions:', error)
         $q.notify({
           type: 'negative',
-          message: 'Ошибка при загрузке направлений'
-        });
+          message: 'Ошибка при загрузке направлений',
+        })
       } finally {
-        loadingDirections.value = false;
+        loadingDirections.value = false
       }
-    };
+    }
 
     const fetchFormats = async () => {
-      loadingFormats.value = true;
+      loadingFormats.value = true
       try {
-        const response = await api.get('/api/marathon-filter/format');
+        const response = await api.get('/api/marathon-filter/format')
         formatOptions.value = (response.data.data || []).map((item: any) => ({
           label: item.name,
-          value: item.id
-        }));
+          value: item.id,
+        }))
       } catch (error) {
-        console.error('Error fetching formats:', error);
+        console.error('Error fetching formats:', error)
         $q.notify({
           type: 'negative',
-          message: 'Ошибка при загрузке форматов'
-        });
+          message: 'Ошибка при загрузке форматов',
+        })
       } finally {
-        loadingFormats.value = false;
+        loadingFormats.value = false
       }
-    };
+    }
 
     const fetchMarathonData = async (id: string | number) => {
-      loading.value = true;
+      loading.value = true
       try {
         const response = await api.get(`/api/marathon/${id}`, {
           params: {
-            'relations': 'modules,modules.dayExercises'
-          }
-        });
-        const data = response.data;
+            relations: 'modules,modules.dayExercises',
+          },
+        })
+        const data = response.data
         formData.value = {
           id: data.id,
           title: data.title,
@@ -573,105 +615,106 @@ export default defineComponent({
           longTermChangesText: data.longTermChangesText || '',
           suitableText: data.suitableText || '',
           participationFormatText: data.participationFormatText || '',
-        };
-        console.log('Загруженные данные марафона:', formData.value);
+        }
+        console.log('Загруженные данные марафона:', formData.value)
       } catch (error) {
-        console.error('Error loading marathon:', error);
+        console.error('Error loading marathon:', error)
         $q.notify({
           type: 'negative',
-          message: 'Ошибка при загрузке марафона'
-        });
-        router.push('/marathons');
+          message: 'Ошибка при загрузке марафона',
+        })
+        router.push('/marathons')
       } finally {
-        loading.value = false;
+        loading.value = false
       }
-    };
+    }
 
     onMounted(() => {
-      fetchCategories();
-      fetchDirections();
-      fetchFormats();
-      const id = route.params.id;
+      fetchCategories()
+      fetchDirections()
+      fetchFormats()
+      const id = route.params.id
       if (isEdit.value && typeof id === 'string') {
-        fetchMarathonData(id);
+        fetchMarathonData(id)
       }
-    });
+    })
 
     const onSubmit = async () => {
-      loading.value = true;
+      loading.value = true
       try {
         if (isEdit.value) {
-          await api.patch(`/api/marathon/${route.params.id}`, formData.value);
+          await api.patch(`/api/marathon/${route.params.id}`, formData.value)
           $q.notify({
             type: 'positive',
-            message: 'Марафон успешно обновлен'
-          });
+            message: 'Марафон успешно обновлен',
+          })
         } else {
-          await api.post('/api/marathon', formData.value);
+          await api.post('/api/marathon', formData.value)
           $q.notify({
             type: 'positive',
-            message: 'Марафон успешно создан'
-          });
+            message: 'Марафон успешно создан',
+          })
         }
-        router.push('/marathons');
+        router.push('/marathons')
       } catch (error: any) {
-        console.error('Error saving marathon:', error);
-        const message = error.response?.data?.message || 'Ошибка при сохранении марафона';
+        console.error('Error saving marathon:', error)
+        const message =
+          error.response?.data?.message || 'Ошибка при сохранении марафона'
         $q.notify({
           type: 'negative',
-          message: message
-        });
+          message: message,
+        })
       } finally {
-        loading.value = false;
+        loading.value = false
       }
-    };
+    }
 
     const editModule = (module: any) => {
-      editingModuleId.value = module.id;
-      showModuleForm.value = true;
-    };
+      editingModuleId.value = module.id
+      showModuleForm.value = true
+    }
 
     const addNewModule = () => {
-      editingModuleId.value = undefined;
-      showModuleForm.value = true;
-    };
+      editingModuleId.value = undefined
+      showModuleForm.value = true
+    }
 
     const handleModuleSubmit = () => {
-      showModuleForm.value = false;
+      showModuleForm.value = false
       if (formData.value.id) {
-        fetchMarathonData(formData.value.id);
+        fetchMarathonData(formData.value.id)
       }
-    };
+    }
 
     // Computed для MarkdownEditor, чтобы всегда была строка
     const targetTextModel = computed({
       get: () => formData.value.targetText || '',
-      set: v => formData.value.targetText = v
-    });
+      set: (v) => (formData.value.targetText = v),
+    })
     const problemTextModel = computed({
       get: () => formData.value.problemText || '',
-      set: v => formData.value.problemText = v
-    });
+      set: (v) => (formData.value.problemText = v),
+    })
     const solutionTextModel = computed({
       get: () => formData.value.solutionText || '',
-      set: v => formData.value.solutionText = v
-    });
+      set: (v) => (formData.value.solutionText = v),
+    })
     const resultsTextModel = computed({
       get: () => formData.value.resultsText || '',
-      set: v => formData.value.resultsText = v
-    });
+      set: (v) => (formData.value.resultsText = v),
+    })
     const longTermChangesTextModel = computed({
       get: () => formData.value.longTermChangesText || '',
-      set: v => formData.value.longTermChangesText = v
-    });
+      set: (v) => (formData.value.longTermChangesText = v),
+    })
     const suitableTextModel = computed({
       get: () => formData.value.suitableText || '',
-      set: v => formData.value.suitableText = v
-    });
+      set: (v) => (formData.value.suitableText = v),
+    })
     const participationFormatTextModel = computed({
       get: () => formData.value.participationFormatText || '',
-      set: v => formData.value.participationFormatText = v
-    });
+      set: (v) => (formData.value.participationFormatText = v),
+    })
 
     return {
       formData,
@@ -697,10 +740,10 @@ export default defineComponent({
       resultsTextModel,
       longTermChangesTextModel,
       suitableTextModel,
-      participationFormatTextModel
-    };
-  }
-});
+      participationFormatTextModel,
+    }
+  },
+})
 </script>
 
 <style lang="scss" scoped>
@@ -714,7 +757,11 @@ export default defineComponent({
 }
 
 :deep(.q-separator) {
-  background: linear-gradient(135deg, $aivy-turquoise-5 0%, $aivy-indigo-3 100%);
+  background: linear-gradient(
+    135deg,
+    $aivy-turquoise-5 0%,
+    $aivy-indigo-3 100%
+  );
   height: 2px;
   margin: 24px 0;
 }
