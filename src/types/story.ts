@@ -21,7 +21,7 @@ export type Story = {
   group: string
   order: number
   fileId: number | null
-  isReleased: true
+  isReleased: boolean
   isBanner: boolean
   previewId: number | null
   link: string | null

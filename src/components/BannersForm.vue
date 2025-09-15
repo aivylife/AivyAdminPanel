@@ -43,6 +43,12 @@
             :rules="[(val) => Boolean(val) || 'Обязательное поле']"
           />
 
+          <q-toggle
+            v-model="formData.isReleased"
+            label="Общедоступное"
+            color="primary"
+          />
+
           <q-separator class="q-my-lg" />
 
           <div class="row justify-end q-gutter-sm">
@@ -160,7 +166,7 @@ export default defineComponent({
         description: formData.value.description || '',
         positionText: formData.value.positionText || '',
         group: formData.value.group || '',
-        isReleased: formData.value.isReleased || true,
+        isReleased: formData.value.isReleased,
         isBanner: formData.value.isBanner || true,
         order: formData.value.order || 1,
         link: formData.value.link || '',
