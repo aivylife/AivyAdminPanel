@@ -116,6 +116,20 @@
                 bg-color="white"
               />
             </div>
+
+            <div class="col-12 col-md-6">
+              <q-input
+                v-model.number="formData.order"
+                label="Порядок"
+                type="number"
+                :rules="[
+                  (val) => val >= 0 || 'Порядок не может быть отрицательным',
+                ]"
+                outlined
+                bg-color="white"
+              />
+            </div>
+
             <div class="col-12 col-md-6">
               <div class="row q-col-gutter-md">
                 <div class="col-12 col-md-6">
@@ -840,6 +854,7 @@ export default defineComponent({
       title: '',
       description: '',
       timeCount: 0,
+      order: 0,
       mainPhoto: null,
       mainVideo: null,
       mainAudio: null,
@@ -1156,6 +1171,7 @@ export default defineComponent({
                 },
               },
             },
+            order: exercise.order || 0,
           }
           await loadInitialPreviewUrls()
         } else {
