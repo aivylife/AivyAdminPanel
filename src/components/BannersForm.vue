@@ -28,6 +28,13 @@
             />
 
             <q-input
+              label="Название"
+              v-model="formData.title"
+              outlined
+              bg-color="white"
+            />
+
+            <q-input
               label="Ссылка"
               v-model="formData.link"
               outlined
