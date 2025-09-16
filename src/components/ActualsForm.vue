@@ -58,6 +58,13 @@
                 />
 
                 <q-input
+                  label="Текст кнопки"
+                  v-model="story.description"
+                  outlined
+                  bg-color="white"
+                />
+
+                <q-input
                   label="Ссылка"
                   v-model="story.link"
                   outlined
