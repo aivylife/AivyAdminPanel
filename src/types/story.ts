@@ -28,3 +28,13 @@ export type Story = {
   file: File | null
   preview: File | null
 }
+
+export type RealStory = {
+  id: number
+  createdAt: string
+  updatedAt: string
+  deletedAt: string | null
+  link: string | null
+  fileId: number | null
+  file: File | null
+}

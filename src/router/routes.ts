@@ -96,6 +96,15 @@ const routes: RouteRecordRaw[] = [
         path: 'users/:id',
         component: () => import('components/UserForm.vue'),
       },
+      { path: 'stories', component: () => import('pages/StoryListPage.vue') },
+      {
+        path: 'stories/new',
+        component: () => import('components/StoryForm.vue'),
+      },
+      {
+        path: 'stories/edit/:id',
+        component: () => import('components/StoryForm.vue'),
+      },
     ],
   },
   {

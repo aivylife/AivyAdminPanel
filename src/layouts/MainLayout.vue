@@ -91,6 +91,13 @@
           </q-item-section>
           <q-item-section>Пользователи</q-item-section>
         </q-item>
+
+        <q-item clickable v-ripple to="/stories">
+          <q-item-section avatar>
+            <q-icon name="schedule" />
+          </q-item-section>
+          <q-item-section>Сторис</q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
