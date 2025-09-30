@@ -3,7 +3,7 @@ name: Deploy Docker to Server Core
 on:
   push:
     branches:
-      - main
+      - dev
 
 env:
   PROJECT_NAME: aivy-admin-panel
@@ -35,7 +35,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/${{ env.PROJECT_NAME }}:${{ github.sha }}
+          tags: ghcr.io/${{ github.repository_owner }}/${{ env.PROJECT_NAME }}:${{ github.sha }}-dev
 
       - name: Deploy to VM via SSH
         uses: appleboy/ssh-action@v1.0.0
@@ -46,19 +46,19 @@ jobs:
           script: |
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
             
-            cd /var/www/adminpanel/
+            cd /var/www/adminpanel-dev/
 
             cat <<EOF > docker-compose.yaml
             version: '3.8'
 
             services:
               frontend:
-                image: ghcr.io/${{ github.repository_owner }}/${{ env.PROJECT_NAME }}:${{ github.sha }}
+                image: ghcr.io/${{ github.repository_owner }}/${{ env.PROJECT_NAME }}:${{ github.sha }}-dev
                 ports:
-                  - "8080:80"
+                  - "8081:80"
                 restart: unless-stopped
                 environment:
-                  - NODE_ENV=production
+                  - NODE_ENV=dev
                 networks:
                   - app-network
 
