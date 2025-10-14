@@ -16,31 +16,48 @@
     >
       <template v-slot:body-cell-icon="props">
         <q-td :props="props" class="q-pa-none text-center">
-          <img v-if="props.row.icon && props.row.icon.path" :src="getFullImagePath(props.row.icon.path)" alt="icon" style="width:28px;height:28px;object-fit:contain;" />
+          <img
+            v-if="props.row.icon && props.row.icon.path"
+            :src="getFullImagePath(props.row.icon.path)"
+            alt="icon"
+            style="width: 28px; height: 28px; object-fit: contain"
+          />
         </q-td>
       </template>
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
-          <q-btn flat round color="primary" icon="edit" @click.stop="editFormat(props.row)" />
-          <q-btn flat round color="negative" icon="delete" @click.stop="confirmDelete(props.row)" />
+          <q-btn
+            flat
+            round
+            color="primary"
+            icon="edit"
+            @click.stop="editFormat(props.row)"
+          />
+          <q-btn
+            flat
+            round
+            color="negative"
+            icon="delete"
+            @click.stop="confirmDelete(props.row)"
+          />
         </q-td>
       </template>
     </q-table>
 
     <q-dialog v-model="dialog" persistent>
-      <q-card style="min-width: 400px; max-width: 560px; padding: 0 24px;">
+      <q-card style="min-width: 400px; max-width: 560px; padding: 0 24px">
         <q-card-section>
-          <div class="text-h5 text-weight-bold text-center">{{ isEdit ? 'Редактировать формат' : 'Добавить формат' }}</div>
-        
+          <div class="text-h5 text-weight-bold text-center">
+            {{ isEdit ? 'Редактировать формат' : 'Добавить формат' }}
+          </div>
         </q-card-section>
         <q-separator class="gradient-separator q-mt-xs" />
         <q-card-section class="">
-          
           <q-form @submit="onSubmit" class="q-gutter-md">
             <q-input
               v-model="form.name"
               label="Название"
-              :rules="[val => !!val || 'Обязательное поле']"
+              :rules="[(val) => !!val || 'Обязательное поле']"
               dense
               class="full-width q-mb-md"
             />
@@ -52,7 +69,7 @@
               option-value="id"
               emit-value
               map-options
-              :rules="[val => !!val || 'Обязательное поле']"
+              :rules="[(val) => !!val || 'Обязательное поле']"
               dense
               class="full-width q-mb-sm"
               :placeholder="'Выберите категорию'"
@@ -89,7 +106,12 @@
             <q-separator class="gradient-separator q-my-md" />
             <div class="row justify-end q-mt-md">
               <q-btn label="Отмена" color="negative" flat v-close-popup />
-              <q-btn label="СОХРАНИТЬ" type="submit" color="primary" class="q-ml-sm" />
+              <q-btn
+                label="СОХРАНИТЬ"
+                type="submit"
+                color="primary"
+                class="q-ml-sm"
+              />
             </div>
           </q-form>
         </q-card-section>
@@ -98,7 +120,19 @@
 
     <IconSelector
       v-model="showIconSelector"
-      :initial-icon="form.icon && form.icon.id ? { ...form.icon, type: '', uuidName: '', createdAt: '', updatedAt: '', createdById: 0, deletedAt: null } : null"
+      :initial-icon="
+        form.icon && form.icon.id
+          ? {
+              ...form.icon,
+              type: '',
+              uuidName: '',
+              createdAt: '',
+              updatedAt: '',
+              createdById: 0,
+              deletedAt: null,
+            }
+          : null
+      "
       @select="onIconSelect"
     />
 
@@ -107,12 +141,22 @@
       <q-card>
         <q-card-section class="row items-center">
           <q-avatar icon="warning" color="negative" text-color="white" />
-          <span class="q-ml-sm">Вы уверены, что хотите удалить формат "{{ selectedFormat?.name }}"?</span>
+          <span class="q-ml-sm"
+            >Вы уверены, что хотите удалить формат "{{
+              selectedFormat?.name
+            }}"?</span
+          >
         </q-card-section>
 
         <q-card-actions align="right">
           <q-btn flat label="Отмена" color="primary" v-close-popup />
-          <q-btn flat label="Удалить" color="negative" @click="deleteFormat" :loading="deleting" />
+          <q-btn
+            flat
+            label="Удалить"
+            color="negative"
+            @click="deleteFormat"
+            :loading="deleting"
+          />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -120,31 +164,31 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue';
-import { useQuasar, Dialog } from 'quasar';
-import { api } from 'src/boot/axios';
-import FileUploader from 'src/components/FileUploader.vue';
-import IconSelector from 'src/components/IconSelector.vue';
+import { defineComponent, ref, onMounted } from 'vue'
+import { useQuasar } from 'quasar'
+import { api, BASE_URL } from 'src/boot/axios'
+import FileUploader from 'src/components/FileUploader.vue'
+import IconSelector from 'src/components/IconSelector.vue'
 
 interface Category {
-  id: number;
-  name: string;
+  id: number
+  name: string
 }
 
 interface Format {
-  id: number;
-  name: string;
-  photo: File | { id: number; name: string; path?: string } | null;
-  icon: { id: number; name: string; path: string } | null;
-  categoryId: number | null;
+  id: number
+  name: string
+  photo: File | { id: number; name: string; path?: string } | null
+  icon: { id: number; name: string; path: string } | null
+  categoryId: number | null
 }
 
 interface Pagination {
-  sortBy: string;
-  descending: boolean;
-  page: number;
-  rowsPerPage: number;
-  rowsNumber: number;
+  sortBy: string
+  descending: boolean
+  page: number
+  rowsPerPage: number
+  rowsNumber: number
 }
 
 export default defineComponent({
@@ -152,184 +196,208 @@ export default defineComponent({
   components: { FileUploader, IconSelector },
 
   setup() {
-    const $q = useQuasar();
-    const loading = ref(false);
-    const dialog = ref(false);
-    const showIconSelector = ref(false);
-    const isEdit = ref(false);
-    const formats = ref<Format[]>([]);
-    const categories = ref<Category[]>([]);
+    const $q = useQuasar()
+    const loading = ref(false)
+    const dialog = ref(false)
+    const showIconSelector = ref(false)
+    const isEdit = ref(false)
+    const formats = ref<Format[]>([])
+    const categories = ref<Category[]>([])
     const pagination = ref<Pagination>({
       sortBy: 'name',
       descending: false,
       page: 1,
       rowsPerPage: 10,
-      rowsNumber: 0
-    });
-    const showDeleteDialog = ref(false);
-    const selectedFormat = ref<Format | null>(null);
-    const deleting = ref(false);
+      rowsNumber: 0,
+    })
+    const showDeleteDialog = ref(false)
+    const selectedFormat = ref<Format | null>(null)
+    const deleting = ref(false)
 
     const form = ref({
       id: null as number | null,
       name: '',
       photo: null as File | { id: number; name: string; path?: string } | null,
       icon: null as { id: number; name: string; path: string } | null,
-      categoryId: null as number | null
-    });
+      categoryId: null as number | null,
+    })
 
     const columns = [
-      { name: 'icon', label: 'Иконка', field: 'icon', align: 'center' as const, sortable: false, style: 'width: 44px; min-width: 44px; max-width: 56px;' },
+      {
+        name: 'icon',
+        label: 'Иконка',
+        field: 'icon',
+        align: 'center' as const,
+        sortable: false,
+        style: 'width: 44px; min-width: 44px; max-width: 56px;',
+      },
       { name: 'name', label: 'Название', field: 'name', sortable: true },
-      { name: 'category', label: 'Категория', field: (row: Format) => categories.value.find(c => c.id === row.categoryId)?.name, sortable: true },
-      { name: 'actions', label: 'Действия', field: 'actions', align: 'right' as const }
-    ];
+      {
+        name: 'category',
+        label: 'Категория',
+        field: (row: Format) =>
+          categories.value.find((c) => c.id === row.categoryId)?.name,
+        sortable: true,
+      },
+      {
+        name: 'actions',
+        label: 'Действия',
+        field: 'actions',
+        align: 'right' as const,
+      },
+    ]
 
     const getFullImagePath = (path: string) => {
-      if (!path) return '';
-      if (path.startsWith('http')) return path;
-      const baseUrl = (process.env.API_URL || 'https://aivy.mobgroup.kz').replace('/api', '');
-      return `${baseUrl}${path}`;
-    };
+      if (!path) return ''
+      if (path.startsWith('http')) return path
+
+      return `${BASE_URL}${path}`
+    }
 
     const onRequest = async (props: any) => {
-      const { page = 1, rowsPerPage = 10, sortBy = null, descending = false } = props.pagination ?? pagination.value;
+      const {
+        page = 1,
+        rowsPerPage = 10,
+        sortBy = null,
+        descending = false,
+      } = props.pagination ?? pagination.value
 
       const params: Record<string, any> = {
         page,
-        perPage: rowsPerPage
-      };
-
-      if (sortBy) {
-        params.order = JSON.stringify({ [sortBy]: descending ? 'DESC' : 'ASC' });
+        perPage: rowsPerPage,
       }
 
-      loading.value = true;
+      if (sortBy) {
+        params.order = JSON.stringify({ [sortBy]: descending ? 'DESC' : 'ASC' })
+      }
+
+      loading.value = true
       try {
-        const response = await api.get('/api/exercise/formats', { params });
-        formats.value = response.data.data || [];
-        pagination.value.page = response.data.pagination?.page || 1;
-        pagination.value.rowsPerPage = response.data.pagination?.perPage || 10;
-        pagination.value.rowsNumber = response.data.pagination?.totalElements || 0;
+        const response = await api.get('/exercise/formats', { params })
+        formats.value = response.data.data || []
+        pagination.value.page = response.data.pagination?.page || 1
+        pagination.value.rowsPerPage = response.data.pagination?.perPage || 10
+        pagination.value.rowsNumber =
+          response.data.pagination?.totalElements || 0
       } catch (error) {
         $q.notify({
           color: 'negative',
           message: 'Ошибка при загрузке форматов',
-          icon: 'error'
-        });
+          icon: 'error',
+        })
       } finally {
-        loading.value = false;
+        loading.value = false
       }
-    };
+    }
 
     const loadCategories = async () => {
       try {
-        const response = await api.get('/api/exercise/categories');
-        categories.value = response.data;
+        const response = await api.get('/exercise/categories')
+        categories.value = response.data
       } catch (error) {
         $q.notify({
           color: 'negative',
           message: 'Ошибка при загрузке категорий',
-          icon: 'error'
-        });
+          icon: 'error',
+        })
       }
-    };
+    }
 
     const openDialog = () => {
-      isEdit.value = false;
+      isEdit.value = false
       form.value = {
         id: null,
         name: '',
         photo: null,
         icon: null,
-        categoryId: null
-      };
-      dialog.value = true;
-    };
+        categoryId: null,
+      }
+      dialog.value = true
+    }
 
     const editFormat = (format: Format) => {
-      isEdit.value = true;
+      isEdit.value = true
       form.value = {
         id: format.id,
         name: format.name,
         photo: format.photo || null,
         icon: format.icon,
-        categoryId: format.categoryId
-      };
-      dialog.value = true;
-    };
+        categoryId: format.categoryId,
+      }
+      dialog.value = true
+    }
 
     const onIconSelect = (icon: { id: number; name: string; path: string }) => {
-      form.value.icon = icon;
-    };
+      form.value.icon = icon
+    }
 
     const onSubmit = async () => {
       try {
         const data: any = {
           name: form.value.name,
           categoryId: form.value.categoryId,
-        };
+        }
         if (form.value.photo && 'id' in form.value.photo) {
-          data.photoId = form.value.photo.id;
+          data.photoId = form.value.photo.id
         }
         if (form.value.icon && form.value.icon.id) {
-          data.icon = { id: form.value.icon.id };
+          data.icon = { id: form.value.icon.id }
         }
         if (isEdit.value && form.value.id) {
-          await api.patch(`/api/exercise/format/${form.value.id}`, data);
+          await api.patch(`/exercise/format/${form.value.id}`, data)
         } else {
-          await api.post('/api/exercise/format', data);
+          await api.post('/exercise/format', data)
         }
-        dialog.value = false;
-        onRequest({ pagination: pagination.value });
+        dialog.value = false
+        onRequest({ pagination: pagination.value })
         $q.notify({
           color: 'positive',
           message: 'Формат успешно сохранён',
-          icon: 'check'
-        });
+          icon: 'check',
+        })
       } catch (error) {
         $q.notify({
           color: 'negative',
           message: 'Ошибка при сохранении формата',
-          icon: 'error'
-        });
+          icon: 'error',
+        })
       }
-    };
+    }
 
     const confirmDelete = (format: Format) => {
-      selectedFormat.value = format;
-      showDeleteDialog.value = true;
-    };
+      selectedFormat.value = format
+      showDeleteDialog.value = true
+    }
 
     const deleteFormat = async () => {
-      if (!selectedFormat.value) return;
+      if (!selectedFormat.value) return
 
-      deleting.value = true;
-        try {
-        await api.delete(`/api/exercise/format/${selectedFormat.value.id}`);
-          onRequest({ pagination: pagination.value });
-          $q.notify({
-            color: 'positive',
-            message: 'Формат успешно удалён',
-            icon: 'check'
-          });
-        showDeleteDialog.value = false;
-        } catch (error) {
-        console.error('Error deleting format:', error);
-          $q.notify({
-            color: 'negative',
-            message: 'Ошибка при удалении формата',
-            icon: 'error'
-          });
+      deleting.value = true
+      try {
+        await api.delete(`/exercise/format/${selectedFormat.value.id}`)
+        onRequest({ pagination: pagination.value })
+        $q.notify({
+          color: 'positive',
+          message: 'Формат успешно удалён',
+          icon: 'check',
+        })
+        showDeleteDialog.value = false
+      } catch (error) {
+        console.error('Error deleting format:', error)
+        $q.notify({
+          color: 'negative',
+          message: 'Ошибка при удалении формата',
+          icon: 'error',
+        })
       } finally {
-        deleting.value = false;
-        }
-    };
+        deleting.value = false
+      }
+    }
 
     onMounted(() => {
-      onRequest({ pagination: pagination.value });
-      loadCategories();
-    });
+      onRequest({ pagination: pagination.value })
+      loadCategories()
+    })
 
     return {
       loading,
@@ -351,10 +419,10 @@ export default defineComponent({
       showDeleteDialog,
       selectedFormat,
       deleting,
-      deleteFormat
-    };
-  }
-});
+      deleteFormat,
+    }
+  },
+})
 </script>
 
 <style scoped>
@@ -425,4 +493,4 @@ export default defineComponent({
 .image-uploader {
   flex: 1;
 }
-</style> 
+</style>

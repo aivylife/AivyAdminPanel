@@ -107,7 +107,7 @@ export default defineComponent({
       isEdit.value = true
 
       try {
-        const response = await api.get<RealStory>(`/api/real-stories/${id}`)
+        const response = await api.get<RealStory>(`/real-stories/${id}`)
         const story = response.data
 
         formData.value = {
@@ -136,14 +136,14 @@ export default defineComponent({
 
       try {
         if (isEdit.value) {
-          await api.patch(`/api/real-stories/${route.params.id}`, data)
+          await api.patch(`/real-stories/${route.params.id}`, data)
 
           $q?.notify({
             type: 'positive',
             message: 'Сторис успешно обновлен',
           })
         } else {
-          await api.post<RealStory>('/api/real-stories', data)
+          await api.post<RealStory>('/real-stories', data)
 
           $q?.notify({
             type: 'positive',

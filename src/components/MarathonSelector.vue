@@ -53,26 +53,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useQuasar, QTableProps } from 'quasar';
-import { api } from 'src/boot/axios';
+import { ref, onMounted } from 'vue'
+import { useQuasar, QTableProps } from 'quasar'
+import { api } from 'src/boot/axios'
 
-const emit = defineEmits(['select']);
-const $q = useQuasar();
-const marathons = ref([]);
-const loading = ref(false);
+const emit = defineEmits(['select'])
+const $q = useQuasar()
+const marathons = ref([])
+const loading = ref(false)
 
 const filters = ref({
-  title: ''
-});
+  title: '',
+})
 
 const pagination = ref({
   sortBy: 'id',
   descending: true,
   page: 1,
   rowsPerPage: 10,
-  rowsNumber: 0
-});
+  rowsNumber: 0,
+})
 
 const columns: QTableProps['columns'] = [
   {
@@ -82,7 +82,7 @@ const columns: QTableProps['columns'] = [
     align: 'left' as const,
     field: 'createdAt',
     sortable: true,
-    format: (val: string) => new Date(val).toLocaleDateString('ru-RU')
+    format: (val: string) => new Date(val).toLocaleDateString('ru-RU'),
   },
   {
     name: 'title',
@@ -90,17 +90,22 @@ const columns: QTableProps['columns'] = [
     label: 'Название',
     align: 'left' as const,
     field: 'title',
-    sortable: true
-  }
-];
+    sortable: true,
+  },
+]
 
 const onRequest = async (props: { pagination: QTableProps['pagination'] }) => {
-  const { page = 1, rowsPerPage = 10, sortBy = null, descending = false } = props.pagination ?? pagination.value;
+  const {
+    page = 1,
+    rowsPerPage = 10,
+    sortBy = null,
+    descending = false,
+  } = props.pagination ?? pagination.value
 
   const params: Record<string, any> = {
     page,
-    perPage: rowsPerPage
-  };
+    perPage: rowsPerPage,
+  }
 
   // Обработка сортировки
   if (sortBy) {
@@ -108,54 +113,55 @@ const onRequest = async (props: { pagination: QTableProps['pagination'] }) => {
     if (sortBy === pagination.value.sortBy) {
       // Если уже desc, значит это третий клик - сбрасываем сортировку
       if (pagination.value.descending) {
-        pagination.value.sortBy = 'id';
-        pagination.value.descending = true;
-        params.order = JSON.stringify({ id: 'DESC' });
+        pagination.value.sortBy = 'id'
+        pagination.value.descending = true
+        params.order = JSON.stringify({ id: 'DESC' })
       } else {
         // Иначе меняем на desc
-        pagination.value.descending = true;
-        params.order = JSON.stringify({ [sortBy]: 'DESC' });
+        pagination.value.descending = true
+        params.order = JSON.stringify({ [sortBy]: 'DESC' })
       }
     } else {
       // Если кликнули на другую колонку, начинаем с asc
-      pagination.value.sortBy = sortBy;
-      pagination.value.descending = false;
-      params.order = JSON.stringify({ [sortBy]: 'ASC' });
+      pagination.value.sortBy = sortBy
+      pagination.value.descending = false
+      params.order = JSON.stringify({ [sortBy]: 'ASC' })
     }
   } else {
     // Если нет активной сортировки, используем сортировку по id DESC
-    pagination.value.sortBy = 'id';
-    pagination.value.descending = true;
-    params.order = JSON.stringify({ id: 'DESC' });
+    pagination.value.sortBy = 'id'
+    pagination.value.descending = true
+    params.order = JSON.stringify({ id: 'DESC' })
   }
 
   // Обновляем состояние пагинации для корректного отображения стрелок
-  pagination.value.page = page;
-  pagination.value.rowsPerPage = rowsPerPage;
+  pagination.value.page = page
+  pagination.value.rowsPerPage = rowsPerPage
 
   if (filters.value.title) {
-    params['like.title'] = filters.value.title;
+    params['like.title'] = filters.value.title
   }
 
-  loading.value = true;
+  loading.value = true
   try {
-    const response = await api.get('/api/marathon', { params });
-    marathons.value = response.data.data || response.data;
-    pagination.value.rowsNumber = response.data.pagination?.totalElements || response.data.total || 0;
+    const response = await api.get('/marathon', { params })
+    marathons.value = response.data.data || response.data
+    pagination.value.rowsNumber =
+      response.data.pagination?.totalElements || response.data.total || 0
   } catch (error) {
-    $q.notify({ type: 'negative', message: 'Ошибка при загрузке марафонов' });
+    $q.notify({ type: 'negative', message: 'Ошибка при загрузке марафонов' })
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
 const selectMarathon = (marathon: any) => {
-  emit('select', marathon);
-};
+  emit('select', marathon)
+}
 
 onMounted(() => {
-  onRequest({ pagination: pagination.value });
-});
+  onRequest({ pagination: pagination.value })
+})
 </script>
 
 <style lang="scss" scoped>
@@ -165,4 +171,4 @@ onMounted(() => {
     height: 100%;
   }
 }
-</style> 
+</style>

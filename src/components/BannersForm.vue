@@ -136,7 +136,7 @@ export default defineComponent({
       isEdit.value = true
 
       try {
-        const response = await api.get<Story>(`/api/story/${id}`, {
+        const response = await api.get<Story>(`/story/${id}`, {
           params: { isBanner: true },
         })
         const banner = response.data
@@ -184,14 +184,14 @@ export default defineComponent({
 
       try {
         if (isEdit.value) {
-          await api.patch(`/api/story/${route.params.id}`, data)
+          await api.patch(`/story/${route.params.id}`, data)
 
           $q?.notify({
             type: 'positive',
             message: 'Баннер успешно обновлен',
           })
         } else {
-          await api.post<Story>('/api/story', data)
+          await api.post<Story>('/story', data)
 
           $q?.notify({
             type: 'positive',

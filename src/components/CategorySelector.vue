@@ -1,10 +1,20 @@
 <template>
-  <q-dialog :model-value="modelValue" @update:model-value="$emit('update:modelValue')" persistent>
-    <q-card style="width: 90vw; max-width: 800px;">
+  <q-dialog
+    :model-value="modelValue"
+    @update:model-value="$emit('update:modelValue')"
+    persistent
+  >
+    <q-card style="width: 90vw; max-width: 800px">
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h6">Выбор категории упражнения</div>
         <q-space />
-        <q-btn icon="close" flat round dense @click="$emit('update:modelValue', false)" />
+        <q-btn
+          icon="close"
+          flat
+          round
+          dense
+          @click="$emit('update:modelValue', false)"
+        />
       </q-card-section>
 
       <q-card-section>
@@ -56,7 +66,9 @@
           </template>
 
           <template v-slot:no-data>
-            <div class="full-width row flex-center text-grey q-gutter-sm q-pa-lg">
+            <div
+              class="full-width row flex-center text-grey q-gutter-sm q-pa-lg"
+            >
               <q-icon size="2em" name="sentiment_dissatisfied" />
               <span>Нет категорий для выбора</span>
             </div>
@@ -76,14 +88,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch, PropType } from 'vue';
-import { useQuasar, QTableColumn } from 'quasar';
-import { api } from 'src/boot/axios';
+import { defineComponent, ref, watch, PropType } from 'vue'
+import { useQuasar, QTableColumn } from 'quasar'
+import { api } from 'src/boot/axios'
 
 interface Category {
-  id: number;
-  name: string;
-  emoji: string;
+  id: number
+  name: string
+  emoji: string
 }
 
 export default defineComponent({
@@ -92,91 +104,112 @@ export default defineComponent({
     modelValue: Boolean,
     initialCategory: {
       type: Object as PropType<Category | null>,
-      default: null
-    }
+      default: null,
+    },
   },
   emits: ['update:modelValue', 'select'],
 
   setup(props, { emit }) {
-    const $q = useQuasar();
-    const categories = ref<Category[]>([]);
-    const loading = ref(false);
-    const selectedCategory = ref<Category | null>(props.initialCategory);
-    const search = ref('');
+    const $q = useQuasar()
+    const categories = ref<Category[]>([])
+    const loading = ref(false)
+    const selectedCategory = ref<Category | null>(props.initialCategory)
+    const search = ref('')
 
     const pagination = ref({
       sortBy: 'name',
       descending: false,
       page: 1,
       rowsPerPage: 10,
-      rowsNumber: 0
-    });
+      rowsNumber: 0,
+    })
 
     const columns: QTableColumn[] = [
       { name: 'id', label: 'ID', align: 'left', field: 'id', sortable: true },
-      { name: 'name', label: 'Название', align: 'left', field: 'name', sortable: true }
-    ];
+      {
+        name: 'name',
+        label: 'Название',
+        align: 'left',
+        field: 'name',
+        sortable: true,
+      },
+    ]
 
     const fetchCategories = async () => {
-      loading.value = true;
+      loading.value = true
       try {
         const params: Record<string, any> = {
           page: pagination.value.page,
-          perPage: pagination.value.rowsPerPage
-        };
+          perPage: pagination.value.rowsPerPage,
+        }
 
         if (search.value) {
-          params['like.name'] = search.value;
+          params['like.name'] = search.value
         }
 
         if (pagination.value.sortBy) {
           params.order = JSON.stringify({
-            [pagination.value.sortBy]: pagination.value.descending ? 'DESC' : 'ASC'
-          });
+            [pagination.value.sortBy]: pagination.value.descending
+              ? 'DESC'
+              : 'ASC',
+          })
         }
 
-        const response = await api.get('/api/exercise/categories', { params });
-        categories.value = response.data.data || response.data;
-        pagination.value.rowsNumber = response.data.pagination?.totalElements || response.data.total || 0;
+        const response = await api.get('/exercise/categories', { params })
+        categories.value = response.data.data || response.data
+        pagination.value.rowsNumber =
+          response.data.pagination?.totalElements || response.data.total || 0
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error('Error fetching categories:', error)
         $q.notify({
           type: 'negative',
-          message: 'Ошибка при загрузке категорий'
-        });
+          message: 'Ошибка при загрузке категорий',
+        })
       } finally {
-        loading.value = false;
+        loading.value = false
       }
-    };
+    }
 
     const onRequest = (props: { pagination: any }) => {
-      const { page = 1, rowsPerPage = 10, sortBy = null, descending = false } = props.pagination ?? pagination.value;
+      const {
+        page = 1,
+        rowsPerPage = 10,
+        sortBy = null,
+        descending = false,
+      } = props.pagination ?? pagination.value
 
-      pagination.value.page = page;
-      pagination.value.rowsPerPage = rowsPerPage;
-      pagination.value.sortBy = sortBy || 'name';
-      pagination.value.descending = descending;
+      pagination.value.page = page
+      pagination.value.rowsPerPage = rowsPerPage
+      pagination.value.sortBy = sortBy || 'name'
+      pagination.value.descending = descending
 
-      fetchCategories();
-    };
+      fetchCategories()
+    }
 
     const selectCategory = (category: Category) => {
-      selectedCategory.value = category;
-      emit('select', category);
-      emit('update:modelValue', false);
-    };
+      selectedCategory.value = category
+      emit('select', category)
+      emit('update:modelValue', false)
+    }
 
     // Следим за открытием диалога
-    watch(() => props.modelValue, (newValue) => {
-      if (newValue) {
-        fetchCategories();
+    watch(
+      () => props.modelValue,
+      (newValue) => {
+        if (newValue) {
+          fetchCategories()
+        }
       }
-    });
+    )
 
     // Обновляем выбранную категорию при изменении initialCategory
-    watch(() => props.initialCategory, (newCategory) => {
-      selectedCategory.value = newCategory;
-    }, { deep: true });
+    watch(
+      () => props.initialCategory,
+      (newCategory) => {
+        selectedCategory.value = newCategory
+      },
+      { deep: true }
+    )
 
     return {
       categories,
@@ -186,14 +219,14 @@ export default defineComponent({
       search,
       pagination,
       onRequest,
-      selectCategory
-    };
-  }
-});
+      selectCategory,
+    }
+  },
+})
 </script>
 
 <style lang="scss" scoped>
 .category-select-table {
   max-height: 60vh;
 }
-</style> 
+</style>

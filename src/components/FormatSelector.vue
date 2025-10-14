@@ -1,10 +1,20 @@
 <template>
-  <q-dialog :model-value="modelValue" @update:model-value="$emit('update:modelValue')" persistent>
-    <q-card style="width: 90vw; max-width: 800px;">
+  <q-dialog
+    :model-value="modelValue"
+    @update:model-value="$emit('update:modelValue')"
+    persistent
+  >
+    <q-card style="width: 90vw; max-width: 800px">
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h6">Выбор формата упражнения</div>
         <q-space />
-        <q-btn icon="close" flat round dense @click="$emit('update:modelValue', false)" />
+        <q-btn
+          icon="close"
+          flat
+          round
+          dense
+          @click="$emit('update:modelValue', false)"
+        />
       </q-card-section>
 
       <q-card-section>
@@ -60,13 +70,18 @@
               v-ripple
             >
               <q-td key="icon" :props="props" class="text-center">
-                <img 
-                  v-if="props.row.icon && props.row.icon.path" 
-                  :src="getFullImagePath(props.row.icon.path)" 
-                  alt="icon" 
-                  style="width:24px;height:24px;object-fit:contain;" 
+                <img
+                  v-if="props.row.icon && props.row.icon.path"
+                  :src="getFullImagePath(props.row.icon.path)"
+                  alt="icon"
+                  style="width: 24px; height: 24px; object-fit: contain"
                 />
-                <q-icon v-else name="format_list_bulleted" size="24px" color="grey-5" />
+                <q-icon
+                  v-else
+                  name="format_list_bulleted"
+                  size="24px"
+                  color="grey-5"
+                />
               </q-td>
               <q-td key="name" :props="props">
                 {{ props.row.name }}
@@ -78,7 +93,9 @@
           </template>
 
           <template v-slot:no-data>
-            <div class="full-width row flex-center text-grey q-gutter-sm q-pa-lg">
+            <div
+              class="full-width row flex-center text-grey q-gutter-sm q-pa-lg"
+            >
               <q-icon size="2em" name="sentiment_dissatisfied" />
               <span>Нет форматов для выбора</span>
             </div>
@@ -98,21 +115,21 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch, PropType, computed } from 'vue';
-import { useQuasar, QTableColumn } from 'quasar';
-import { api } from 'src/boot/axios';
+import { defineComponent, ref, watch, PropType, computed } from 'vue'
+import { useQuasar, QTableColumn } from 'quasar'
+import { api, BASE_URL } from 'src/boot/axios'
 
 interface Format {
-  id: number;
-  name: string;
-  categoryId: number;
-  icon?: { id: number; name: string; path: string } | null;
+  id: number
+  name: string
+  categoryId: number
+  icon?: { id: number; name: string; path: string } | null
 }
 
 interface Category {
-  id: number;
-  name: string;
-  emoji: string;
+  id: number
+  name: string
+  emoji: string
 }
 
 export default defineComponent({
@@ -121,143 +138,179 @@ export default defineComponent({
     modelValue: Boolean,
     initialFormat: {
       type: Object as PropType<Format | null>,
-      default: null
+      default: null,
     },
     categoryId: {
       type: Number,
-      default: null
-    }
+      default: null,
+    },
   },
   emits: ['update:modelValue', 'select'],
 
   setup(props, { emit }) {
-    const $q = useQuasar();
-    const formats = ref<Format[]>([]);
-    const categories = ref<Category[]>([]);
-    const loading = ref(false);
-    const selectedFormat = ref<Format | null>(props.initialFormat);
-    const search = ref('');
-    const selectedCategoryFilter = ref<number | null>(props.categoryId);
+    const $q = useQuasar()
+    const formats = ref<Format[]>([])
+    const categories = ref<Category[]>([])
+    const loading = ref(false)
+    const selectedFormat = ref<Format | null>(props.initialFormat)
+    const search = ref('')
+    const selectedCategoryFilter = ref<number | null>(props.categoryId)
 
     const pagination = ref({
       sortBy: 'name',
       descending: false,
       page: 1,
       rowsPerPage: 10,
-      rowsNumber: 0
-    });
+      rowsNumber: 0,
+    })
 
     const columns: QTableColumn[] = [
-      { name: 'icon', label: 'Иконка', align: 'center', field: 'icon', sortable: false },
-      { name: 'name', label: 'Название', align: 'left', field: 'name', sortable: true },
-      { name: 'categoryName', label: 'Категория', align: 'left', field: 'categoryName', sortable: true }
-    ];
+      {
+        name: 'icon',
+        label: 'Иконка',
+        align: 'center',
+        field: 'icon',
+        sortable: false,
+      },
+      {
+        name: 'name',
+        label: 'Название',
+        align: 'left',
+        field: 'name',
+        sortable: true,
+      },
+      {
+        name: 'categoryName',
+        label: 'Категория',
+        align: 'left',
+        field: 'categoryName',
+        sortable: true,
+      },
+    ]
 
     const categoryOptions = computed(() => {
-      return categories.value.map(cat => ({
+      return categories.value.map((cat) => ({
         label: cat.name,
-        value: cat.id
-      }));
-    });
+        value: cat.id,
+      }))
+    })
 
     const fetchCategories = async () => {
       try {
-        const response = await api.get('/api/exercise/categories');
-        categories.value = response.data;
+        const response = await api.get('/exercise/categories')
+        categories.value = response.data
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error('Error fetching categories:', error)
       }
-    };
+    }
 
     const fetchFormats = async () => {
-      loading.value = true;
+      loading.value = true
       try {
         const params: Record<string, any> = {
           page: pagination.value.page,
-          perPage: pagination.value.rowsPerPage
-        };
+          perPage: pagination.value.rowsPerPage,
+        }
 
         if (search.value) {
-          params['like.name'] = search.value;
+          params['like.name'] = search.value
         }
 
         if (selectedCategoryFilter.value) {
-          params['categoryId'] = selectedCategoryFilter.value;
+          params['categoryId'] = selectedCategoryFilter.value
         }
 
         if (pagination.value.sortBy) {
           params.order = JSON.stringify({
-            [pagination.value.sortBy]: pagination.value.descending ? 'DESC' : 'ASC'
-          });
+            [pagination.value.sortBy]: pagination.value.descending
+              ? 'DESC'
+              : 'ASC',
+          })
         }
 
-        const response = await api.get('/api/exercise/formats', { params });
-        const formatsData = response.data.data || response.data;
-        
+        const response = await api.get('/exercise/formats', { params })
+        const formatsData = response.data.data || response.data
+
         // Добавляем название категории к каждому формату
         formats.value = formatsData.map((format: Format) => ({
           ...format,
-          categoryName: getCategoryName(format.categoryId)
-        }));
-        
-        pagination.value.rowsNumber = response.data.pagination?.totalElements || response.data.total || 0;
+          categoryName: getCategoryName(format.categoryId),
+        }))
+
+        pagination.value.rowsNumber =
+          response.data.pagination?.totalElements || response.data.total || 0
       } catch (error) {
-        console.error('Error fetching formats:', error);
+        console.error('Error fetching formats:', error)
         $q.notify({
           type: 'negative',
-          message: 'Ошибка при загрузке форматов'
-        });
+          message: 'Ошибка при загрузке форматов',
+        })
       } finally {
-        loading.value = false;
+        loading.value = false
       }
-    };
+    }
 
     const onRequest = (props: { pagination: any }) => {
-      const { page = 1, rowsPerPage = 10, sortBy = null, descending = false } = props.pagination ?? pagination.value;
+      const {
+        page = 1,
+        rowsPerPage = 10,
+        sortBy = null,
+        descending = false,
+      } = props.pagination ?? pagination.value
 
-      pagination.value.page = page;
-      pagination.value.rowsPerPage = rowsPerPage;
-      pagination.value.sortBy = sortBy || 'name';
-      pagination.value.descending = descending;
+      pagination.value.page = page
+      pagination.value.rowsPerPage = rowsPerPage
+      pagination.value.sortBy = sortBy || 'name'
+      pagination.value.descending = descending
 
-      fetchFormats();
-    };
+      fetchFormats()
+    }
 
     const selectFormat = (format: Format) => {
-      selectedFormat.value = format;
-      emit('select', format);
-      emit('update:modelValue', false);
-    };
+      selectedFormat.value = format
+      emit('select', format)
+      emit('update:modelValue', false)
+    }
 
     const getCategoryName = (categoryId: number): string => {
-      const category = categories.value.find(c => c.id === categoryId);
-      return category ? category.name : '';
-    };
+      const category = categories.value.find((c) => c.id === categoryId)
+      return category ? category.name : ''
+    }
 
     const getFullImagePath = (path: string) => {
-      if (!path) return '';
-      if (path.startsWith('http')) return path;
-      const baseUrl = (process.env.API_URL || 'https://aivy.mobgroup.kz').replace('/api', '');
-      return `${baseUrl}${path}`;
-    };
+      if (!path) return ''
+      if (path.startsWith('http')) return path
+
+      return `${BASE_URL}${path}`
+    }
 
     // Следим за открытием диалога
-    watch(() => props.modelValue, (newValue) => {
-      if (newValue) {
-        fetchCategories();
-        fetchFormats();
+    watch(
+      () => props.modelValue,
+      (newValue) => {
+        if (newValue) {
+          fetchCategories()
+          fetchFormats()
+        }
       }
-    });
+    )
 
     // Обновляем выбранный формат при изменении initialFormat
-    watch(() => props.initialFormat, (newFormat) => {
-      selectedFormat.value = newFormat;
-    }, { deep: true });
+    watch(
+      () => props.initialFormat,
+      (newFormat) => {
+        selectedFormat.value = newFormat
+      },
+      { deep: true }
+    )
 
     // Обновляем фильтр категории при изменении categoryId
-    watch(() => props.categoryId, (newCategoryId) => {
-      selectedCategoryFilter.value = newCategoryId;
-    });
+    watch(
+      () => props.categoryId,
+      (newCategoryId) => {
+        selectedCategoryFilter.value = newCategoryId
+      }
+    )
 
     return {
       formats,
@@ -272,14 +325,14 @@ export default defineComponent({
       onRequest,
       selectFormat,
       getCategoryName,
-      getFullImagePath
-    };
-  }
-});
+      getFullImagePath,
+    }
+  },
+})
 </script>
 
 <style lang="scss" scoped>
 .format-select-table {
   max-height: 60vh;
 }
-</style> 
+</style>

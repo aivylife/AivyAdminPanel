@@ -809,7 +809,7 @@ import MarkdownEditor from './MarkdownEditor.vue'
 import IconSelector from './IconSelector.vue'
 import CategorySelector from './CategorySelector.vue'
 import FormatSelector from './FormatSelector.vue'
-import { api } from 'src/boot/axios'
+import { api, BASE_URL } from 'src/boot/axios'
 
 export default defineComponent({
   name: 'ExerciseForm',
@@ -899,10 +899,7 @@ export default defineComponent({
       // Если это файл с API (уже загружен)
       if (fileData.id && fileData.path) {
         try {
-          const baseUrl = (
-            process.env.API_URL || 'https://aivy.mobgroup.kz'
-          ).replace('/api', '')
-          const fileUrl = `${baseUrl}${fileData.path}`
+          const fileUrl = `${BASE_URL}${fileData.path}`
 
           const response = await fetch(fileUrl, {
             headers: {
@@ -1033,7 +1030,7 @@ export default defineComponent({
       loadingTypes.value = true
       try {
         const response = await api.get<{ id: number; name: string }[]>(
-          '/api/exercise/types'
+          '/exercise/types'
         )
         exerciseTypes.value = response.data.map((type) => ({
           label: type.name,
@@ -1053,7 +1050,7 @@ export default defineComponent({
     const fetchCategories = async () => {
       loadingCategories.value = true
       try {
-        const response = await api.get('/api/exercise/categories')
+        const response = await api.get('/exercise/categories')
         categories.value = response.data
       } catch (error) {
         console.error('Error fetching categories:', error)
@@ -1069,7 +1066,7 @@ export default defineComponent({
     const fetchFormats = async () => {
       loadingFormats.value = true
       try {
-        const response = await api.get('/api/exercise/formats')
+        const response = await api.get('/exercise/formats')
         formats.value = response.data.data
       } catch (error) {
         console.error('Error fetching formats:', error)
@@ -1126,7 +1123,7 @@ export default defineComponent({
         const id = route.params.id
         if (id) {
           isEdit.value = true
-          const response = await api.get(`/api/exercise/${id}`)
+          const response = await api.get(`/exercise/${id}`)
           const exercise = response.data
           formData.value = {
             id: exercise.id,
@@ -1285,13 +1282,13 @@ export default defineComponent({
           delete data.content.data.description
 
         if (isEdit.value) {
-          await api.patch(`/api/exercise/${route.params.id}`, data)
+          await api.patch(`/exercise/${route.params.id}`, data)
           $q?.notify({
             type: 'positive',
             message: 'Упражнение успешно обновлено',
           })
         } else {
-          await api.post('/api/exercise', data)
+          await api.post('/exercise', data)
           $q?.notify({
             type: 'positive',
             message: 'Упражнение успешно создано',
@@ -1312,10 +1309,8 @@ export default defineComponent({
     const getFullImagePath = (path: string) => {
       if (!path) return ''
       if (path.startsWith('http')) return path
-      const baseUrl = (
-        process.env.API_URL || 'https://aivy.mobgroup.kz'
-      ).replace('/api', '')
-      return `${baseUrl}${path}`
+
+      return `${BASE_URL}${path}`
     }
 
     const onIconSelect = (icon: { id: number; name: string; path: string }) => {

@@ -184,7 +184,7 @@ const onRequest = async (props: { pagination: QTableProps['pagination'] }) => {
   loading.value = true
 
   try {
-    const response = await api.get<PaginationData<User[]>>('/api/user', {
+    const response = await api.get<PaginationData<User[]>>('/user', {
       params: { ...params, relations: 'subscription' },
     })
 
@@ -212,7 +212,7 @@ const confirmDeleteUser = (id: number) => {
     persistent: true,
   }).onOk(async () => {
     try {
-      await api.delete(`/api/user/${id}`)
+      await api.delete(`/user/${id}`)
 
       $q.notify({
         type: 'positive',

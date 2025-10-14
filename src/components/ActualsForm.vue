@@ -197,7 +197,7 @@ export default defineComponent({
         persistent: true,
       }).onOk(async () => {
         try {
-          await api.delete(`/api/story/${id}`)
+          await api.delete(`/story/${id}`)
 
           formData.value.stories = formData.value.stories.filter(
             (story) => story.id !== id
@@ -260,7 +260,7 @@ export default defineComponent({
       isEdit.value = true
 
       try {
-        const response = await api.get<Actuals>(`/api/actual-stories/${id}`)
+        const response = await api.get<Actuals>(`/actual-stories/${id}`)
         const actualStory = response.data
 
         formData.value = {
@@ -293,7 +293,7 @@ export default defineComponent({
         if (isEdit.value) {
           for await (const story of stories || []) {
             if (story.id) {
-              await api.patch(`/api/story/${story.id}`, story)
+              await api.patch(`/story/${story.id}`, story)
             } else {
               const data: Partial<Story> = {
                 title: '',
@@ -308,12 +308,12 @@ export default defineComponent({
                 previewId: preview?.id || null,
               }
 
-              const storyResponse = await api.post<Story>('/api/story', data)
+              const storyResponse = await api.post<Story>('/story', data)
               story.id = storyResponse.data.id
             }
           }
 
-          await api.patch(`/api/actual-stories/${id}`, {
+          await api.patch(`/actual-stories/${id}`, {
             name,
             preview,
             stories: stories.map((story) => ({ id: story.id })),
@@ -340,11 +340,11 @@ export default defineComponent({
               previewId: preview?.id || null,
             }
 
-            const storyResponse = await api.post<Story>('/api/story', data)
+            const storyResponse = await api.post<Story>('/story', data)
             createdStories.push(storyResponse.data)
           }
 
-          await api.post('/api/actual-stories', {
+          await api.post('/actual-stories', {
             name,
             preview,
             stories: createdStories.map((story) => ({ id: story.id })),

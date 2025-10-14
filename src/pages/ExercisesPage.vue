@@ -54,12 +54,7 @@
             />
           </div>
           <div class="">
-            <q-input
-              v-model="filters.search"
-              label="поиск"
-              dense
-              outlined
-            />
+            <q-input v-model="filters.search" label="поиск" dense outlined />
           </div>
         </div>
         <q-table
@@ -98,12 +93,22 @@
       <q-card>
         <q-card-section class="row items-center">
           <q-avatar icon="warning" color="negative" text-color="white" />
-          <span class="q-ml-sm">Вы уверены, что хотите удалить упражнение "{{ selectedExercise?.title }}"?</span>
+          <span class="q-ml-sm"
+            >Вы уверены, что хотите удалить упражнение "{{
+              selectedExercise?.title
+            }}"?</span
+          >
         </q-card-section>
 
         <q-card-actions align="right">
           <q-btn flat label="Отмена" color="primary" v-close-popup />
-          <q-btn flat label="Удалить" color="negative" @click="deleteExercise" :loading="deleting" />
+          <q-btn
+            flat
+            label="Удалить"
+            color="negative"
+            @click="deleteExercise"
+            :loading="deleting"
+          />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -111,44 +116,44 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
-import { useExerciseStore } from 'src/stores/exercise';
-import { Exercise } from 'src/models/exercise';
-import { QTableProps, useQuasar } from 'quasar';
-import { api } from 'src/boot/axios';
-import { useRouter } from 'vue-router';
+import { ref, onMounted, watch } from 'vue'
+import { useExerciseStore } from 'src/stores/exercise'
+import { Exercise } from 'src/models/exercise'
+import { QTableProps, useQuasar } from 'quasar'
+import { api } from 'src/boot/axios'
+import { useRouter } from 'vue-router'
 
-const $q = useQuasar();
-const router = useRouter();
-const exerciseStore = useExerciseStore();
+const $q = useQuasar()
+const router = useRouter()
+const exerciseStore = useExerciseStore()
 
 // Определяем тип для опций селекта
 interface SelectOption {
-  label: string;
-  value: number | null; // Разрешаем null для "Все виды"
+  label: string
+  value: number | null // Разрешаем null для "Все виды"
 }
 
-const exerciseTypes = ref<SelectOption[]>([]);
-const categories = ref<SelectOption[]>([]);
-const formats = ref<SelectOption[]>([]);
+const exerciseTypes = ref<SelectOption[]>([])
+const categories = ref<SelectOption[]>([])
+const formats = ref<SelectOption[]>([])
 const filters = ref({
   typeId: null,
   categoryId: null,
   formatId: null,
-  search: null
-});
-const showDeleteDialog = ref(false);
-const selectedExercise = ref<Exercise | null>(null);
-const deleting = ref(false);
-const loading = ref(false);
+  search: null,
+})
+const showDeleteDialog = ref(false)
+const selectedExercise = ref<Exercise | null>(null)
+const deleting = ref(false)
+const loading = ref(false)
 
 const pagination = ref({
   sortBy: 'createdAt' as string | null,
   descending: true,
   page: 1,
   rowsPerPage: 10,
-  rowsNumber: 0
-});
+  rowsNumber: 0,
+})
 
 // Указываем тип для колонок, чтобы исправить ошибку align
 const columns: QTableProps['columns'] = [
@@ -157,7 +162,7 @@ const columns: QTableProps['columns'] = [
     required: true,
     label: 'Действия',
     align: 'left',
-    field: 'actions' // Это поле не используется для данных, только для слота
+    field: 'actions', // Это поле не используется для данных, только для слота
   },
   {
     name: 'createdAt',
@@ -166,7 +171,7 @@ const columns: QTableProps['columns'] = [
     align: 'left',
     field: 'createdAt',
     sortable: true,
-    format: (val: string) => new Date(val).toLocaleDateString('ru-RU')
+    format: (val: string) => new Date(val).toLocaleDateString('ru-RU'),
   },
   {
     name: 'title',
@@ -174,7 +179,7 @@ const columns: QTableProps['columns'] = [
     label: 'Название',
     align: 'left',
     field: 'title',
-    sortable: true
+    sortable: true,
   },
   {
     name: 'description',
@@ -182,15 +187,15 @@ const columns: QTableProps['columns'] = [
     label: 'Описание',
     align: 'left',
     field: 'description',
-    sortable: true
+    sortable: true,
   },
   {
     name: 'type',
     required: true,
     label: 'Тип',
     align: 'left',
-    field: (row: Exercise) => row.type?.name || 'N/A', 
-    sortable: true
+    field: (row: Exercise) => row.type?.name || 'N/A',
+    sortable: true,
   },
   {
     name: 'timeCount',
@@ -198,18 +203,23 @@ const columns: QTableProps['columns'] = [
     label: 'Длительность (мин)',
     align: 'left',
     field: 'timeCount',
-    sortable: true
-  }
-];
+    sortable: true,
+  },
+]
 
 // Указываем тип для props в onRequest
 const onRequest = async (props: { pagination: QTableProps['pagination'] }) => {
-  const { page = 1, rowsPerPage = 10, sortBy = null, descending = false } = props.pagination ?? pagination.value;
+  const {
+    page = 1,
+    rowsPerPage = 10,
+    sortBy = null,
+    descending = false,
+  } = props.pagination ?? pagination.value
 
   const params: Record<string, any> = {
     page,
-    perPage: rowsPerPage
-  };
+    perPage: rowsPerPage,
+  }
 
   // Обработка сортировки
   if (sortBy) {
@@ -217,129 +227,137 @@ const onRequest = async (props: { pagination: QTableProps['pagination'] }) => {
     if (sortBy === pagination.value.sortBy) {
       // Если уже desc, значит это третий клик - сбрасываем сортировку
       if (pagination.value.descending) {
-        pagination.value.sortBy = 'id';
-        pagination.value.descending = true;
-        params.order = JSON.stringify({ id: 'DESC' });
+        pagination.value.sortBy = 'id'
+        pagination.value.descending = true
+        params.order = JSON.stringify({ id: 'DESC' })
       } else {
         // Иначе меняем на desc
-        pagination.value.descending = true;
-        params.order = JSON.stringify({ [sortBy]: 'DESC' });
+        pagination.value.descending = true
+        params.order = JSON.stringify({ [sortBy]: 'DESC' })
       }
     } else {
       // Если кликнули на другую колонку, начинаем с asc
-      pagination.value.sortBy = sortBy;
-      pagination.value.descending = false;
-      params.order = JSON.stringify({ [sortBy]: 'ASC' });
+      pagination.value.sortBy = sortBy
+      pagination.value.descending = false
+      params.order = JSON.stringify({ [sortBy]: 'ASC' })
     }
   } else {
     // Если нет активной сортировки, используем сортировку по id DESC
-    pagination.value.sortBy = 'id';
-    pagination.value.descending = true;
-    params.order = JSON.stringify({ id: 'DESC' });
+    pagination.value.sortBy = 'id'
+    pagination.value.descending = true
+    params.order = JSON.stringify({ id: 'DESC' })
   }
 
   // Обновляем состояние пагинации для корректного отображения стрелок
-  pagination.value.page = page;
-  pagination.value.rowsPerPage = rowsPerPage;
+  pagination.value.page = page
+  pagination.value.rowsPerPage = rowsPerPage
 
   // Добавляем фильтры
-  if (filters.value.typeId) params.typeId = filters.value.typeId;
-  if (filters.value.categoryId) params.categoryId = filters.value.categoryId;
-  if (filters.value.formatId) params.formatId = filters.value.formatId;
+  if (filters.value.typeId) params.typeId = filters.value.typeId
+  if (filters.value.categoryId) params.categoryId = filters.value.categoryId
+  if (filters.value.formatId) params.formatId = filters.value.formatId
   if (filters.value.search) {
-    params['like.title'] = filters.value.search;
+    params['like.title'] = filters.value.search
   }
 
-  loading.value = true;
+  loading.value = true
   try {
-    await exerciseStore.fetchExercises(params);
-    pagination.value.rowsNumber = exerciseStore.total;
+    await exerciseStore.fetchExercises(params)
+    pagination.value.rowsNumber = exerciseStore.total
   } catch (error) {
-    $q.notify({ type: 'negative', message: 'Ошибка при загрузке упражнений' });
+    $q.notify({ type: 'negative', message: 'Ошибка при загрузке упражнений' })
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
 const confirmDelete = (exercise: Exercise) => {
-  selectedExercise.value = exercise;
-  showDeleteDialog.value = true;
-};
+  selectedExercise.value = exercise
+  showDeleteDialog.value = true
+}
 
 const deleteExercise = async () => {
-  if (!selectedExercise.value) return;
+  if (!selectedExercise.value) return
 
-  deleting.value = true;
+  deleting.value = true
   try {
-    await exerciseStore.deleteExercise(selectedExercise.value.id);
+    await exerciseStore.deleteExercise(selectedExercise.value.id)
     $q.notify({
       type: 'positive',
-      message: 'Упражнение успешно удалено'
-    });
-    showDeleteDialog.value = false;
-    await onRequest({ pagination: pagination.value });
+      message: 'Упражнение успешно удалено',
+    })
+    showDeleteDialog.value = false
+    await onRequest({ pagination: pagination.value })
   } catch (error) {
-    console.error('Error deleting exercise:', error);
+    console.error('Error deleting exercise:', error)
     $q.notify({
       type: 'negative',
-      message: 'Ошибка при удалении упражнения'
-    });
+      message: 'Ошибка при удалении упражнения',
+    })
   } finally {
-    deleting.value = false;
+    deleting.value = false
   }
-};
+}
 
 const fetchExerciseTypes = async () => {
   try {
-    const response = await api.get<{ id: number; name: string }[]>('/api/exercise/types');
+    const response = await api.get<{ id: number; name: string }[]>(
+      '/exercise/types'
+    )
     // Используем тип SelectOption
     exerciseTypes.value = [
-      { label: 'Все виды', value: null }, 
-      ...response.data.map(type => ({
+      { label: 'Все виды', value: null },
+      ...response.data.map((type) => ({
         label: type.name,
-        value: type.id
-      }))
-    ];
+        value: type.id,
+      })),
+    ]
   } catch (error) {
-    console.error('Error fetching exercise types:', error);
+    console.error('Error fetching exercise types:', error)
     $q?.notify({
       type: 'negative',
-      message: 'Ошибка при загрузке типов упражнений'
-    });
+      message: 'Ошибка при загрузке типов упражнений',
+    })
   }
-};
+}
 
 const fetchCategories = async () => {
   try {
-    const response = await api.get<{ id: number; name: string }[]>('/api/exercise/categories');
+    const response = await api.get<{ id: number; name: string }[]>(
+      '/exercise/categories'
+    )
     categories.value = [
       { label: 'Все категории', value: null },
-      ...response.data.map(cat => ({ label: cat.name, value: cat.id }))
-    ];
+      ...response.data.map((cat) => ({ label: cat.name, value: cat.id })),
+    ]
   } catch (error) {
-    $q.notify({ type: 'negative', message: 'Ошибка при загрузке категорий' });
+    $q.notify({ type: 'negative', message: 'Ошибка при загрузке категорий' })
   }
-};
+}
 
 const fetchFormats = async () => {
   try {
-    const response = await api.get<{ data: { id: number; name: string; categoryId: number }[] }>('/api/exercise/formats');
+    const response = await api.get<{
+      data: { id: number; name: string; categoryId: number }[]
+    }>('/exercise/formats')
     formats.value = [
       { label: 'Все форматы', value: null },
-      ...response.data.data.map((fmt: { id: number; name: string; categoryId: number }) => {
-        // Найти название категории по id
-        const cat = categories.value.find(c => c.value === fmt.categoryId);
-        const catName = cat ? cat.label : '';
-        return {
-          label: catName ? `${fmt.name} (${catName})` : fmt.name,
-          value: fmt.id
-        };
-      })
-    ];
+      ...response.data.data.map(
+        (fmt: { id: number; name: string; categoryId: number }) => {
+          // Найти название категории по id
+          const cat = categories.value.find((c) => c.value === fmt.categoryId)
+          const catName = cat ? cat.label : ''
+          return {
+            label: catName ? `${fmt.name} (${catName})` : fmt.name,
+            value: fmt.id,
+          }
+        }
+      ),
+    ]
   } catch (error) {
-    $q.notify({ type: 'negative', message: 'Ошибка при загрузке форматов' });
+    $q.notify({ type: 'negative', message: 'Ошибка при загрузке форматов' })
   }
-};
+}
 
 // Стало:
 watch(
@@ -347,33 +365,39 @@ watch(
     () => filters.value.typeId,
     () => filters.value.categoryId,
     () => filters.value.formatId,
-    () => filters.value.search
+    () => filters.value.search,
   ],
-  ([newTypeId, newCategoryId, newFormatId, newSearch], [oldTypeId, oldCategoryId, oldFormatId, oldSearch]) => {
+  (
+    [newTypeId, newCategoryId, newFormatId, newSearch],
+    [oldTypeId, oldCategoryId, oldFormatId, oldSearch]
+  ) => {
     if (
       newTypeId !== oldTypeId ||
       newCategoryId !== oldCategoryId ||
       newFormatId !== oldFormatId ||
       newSearch !== oldSearch
     ) {
-      pagination.value.page = 1;
-      onRequest({ pagination: pagination.value });
+      pagination.value.page = 1
+      onRequest({ pagination: pagination.value })
     }
   },
   { immediate: true }
-);
+)
 
 // Оставляем watch для обновления общего количества
-watch(() => exerciseStore.total, (newTotal) => {
-  pagination.value.rowsNumber = newTotal;
-});
+watch(
+  () => exerciseStore.total,
+  (newTotal) => {
+    pagination.value.rowsNumber = newTotal
+  }
+)
 
 onMounted(async () => {
-  await fetchExerciseTypes();
-  await fetchCategories();
-  await fetchFormats();
-  onRequest({ pagination: pagination.value });
-});
+  await fetchExerciseTypes()
+  await fetchCategories()
+  await fetchFormats()
+  onRequest({ pagination: pagination.value })
+})
 </script>
 
 <style lang="scss" scoped>

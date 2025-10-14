@@ -1,5 +1,5 @@
 # Этап сборки
-FROM node:18-alpine as build-stage
+FROM node:22-alpine AS build-stage
 
 WORKDIR /app
 
@@ -12,11 +12,13 @@ RUN npm install
 # Копируем исходный код
 COPY . .
 
-# Собираем приложение
-RUN npm run build
+# Vite автоматически загрузит .env.production или .env.development в зависимости от BUILD_MODE
+ARG BUILD_MODE=development
+
+RUN npm run build:${BUILD_MODE}
 
 # Этап production
-FROM nginx:stable-alpine as production-stage
+FROM nginx:alpine-slim AS production-stage
 
 # Копируем собранные файлы из этапа сборки
 COPY --from=build-stage /app/dist/spa /usr/share/nginx/html

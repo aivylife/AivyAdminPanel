@@ -23,7 +23,12 @@
       >
         <template v-if="showIconColumn" v-slot:body-cell-icon="props">
           <q-td :props="props" class="q-pa-none text-center">
-            <img v-if="props.row.icon && props.row.icon.path" :src="getFullImagePath(props.row.icon.path)" alt="icon" style="width:28px;height:28px;object-fit:contain;" />
+            <img
+              v-if="props.row.icon && props.row.icon.path"
+              :src="getFullImagePath(props.row.icon.path)"
+              alt="icon"
+              style="width: 28px; height: 28px; object-fit: contain"
+            />
           </q-td>
         </template>
 
@@ -53,19 +58,21 @@
 
     <!-- Форма создания/редактирования -->
     <q-dialog v-model="showForm" persistent>
-      <q-card style="min-width: 400px; max-width: 560px; padding: 0 24px;">
+      <q-card style="min-width: 400px; max-width: 560px; padding: 0 24px">
         <q-card-section>
-          <div class="text-h5 text-weight-bold text-center">{{ formTitle }}</div>
+          <div class="text-h5 text-weight-bold text-center">
+            {{ formTitle }}
+          </div>
         </q-card-section>
         <!-- <q-separator class="gradient-separator q-mt-xs" /> -->
         <q-card-section class="">
           <q-form @submit="saveItem" class="q-gutter-md">
-          <q-input
-            v-model="formData.name"
-            label="Название"
-            :rules="[val => !!val || 'Обязательное поле']"
-            outlined
-            dense
+            <q-input
+              v-model="formData.name"
+              label="Название"
+              :rules="[(val) => !!val || 'Обязательное поле']"
+              outlined
+              dense
               class="full-width q-mb-md"
             />
             <!-- <q-separator v-if="showIconField" class="gradient-separator q-my-xs" /> -->
@@ -86,7 +93,13 @@
             <q-separator class="gradient-separator q-my-md" />
             <div class="row justify-end q-mt-md">
               <q-btn label="Отмена" color="negative" flat v-close-popup />
-              <q-btn label="СОХРАНИТЬ" type="submit" color="primary" class="q-ml-sm" :loading="saving" />
+              <q-btn
+                label="СОХРАНИТЬ"
+                type="submit"
+                color="primary"
+                class="q-ml-sm"
+                :loading="saving"
+              />
             </div>
           </q-form>
         </q-card-section>
@@ -95,7 +108,19 @@
 
     <IconSelector
       v-model="showIconSelector"
-      :initial-icon="formData.icon && formData.icon.id ? { ...formData.icon, type: '', uuidName: '', createdAt: '', updatedAt: '', createdById: 0, deletedAt: null } : null"
+      :initial-icon="
+        formData.icon && formData.icon.id
+          ? {
+              ...formData.icon,
+              type: '',
+              uuidName: '',
+              createdAt: '',
+              updatedAt: '',
+              createdById: 0,
+              deletedAt: null,
+            }
+          : null
+      "
       @select="onIconSelect"
     />
 
@@ -104,12 +129,20 @@
       <q-card>
         <q-card-section class="row items-center">
           <q-avatar icon="warning" color="negative" text-color="white" />
-          <span class="q-ml-sm">Вы уверены, что хотите удалить этот элемент?</span>
+          <span class="q-ml-sm"
+            >Вы уверены, что хотите удалить этот элемент?</span
+          >
         </q-card-section>
 
         <q-card-actions align="right">
           <q-btn flat label="Отмена" color="primary" v-close-popup />
-          <q-btn flat label="Удалить" color="negative" @click="deleteItem" :loading="deleting" />
+          <q-btn
+            flat
+            label="Удалить"
+            color="negative"
+            @click="deleteItem"
+            :loading="deleting"
+          />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -117,176 +150,202 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useQuasar } from 'quasar';
-import { api } from 'src/boot/axios';
-import IconSelector from 'src/components/IconSelector.vue';
+import { defineComponent, ref, onMounted, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
+import { api, BASE_URL } from 'src/boot/axios'
+import IconSelector from 'src/components/IconSelector.vue'
 
 interface ReferenceItem {
-  id: number;
-  name: string;
-  icon?: { id: number; name: string; path: string } | null;
-  createdAt?: string;
-  updatedAt?: string;
-  deletedAt?: string | null;
+  id: number
+  name: string
+  icon?: { id: number; name: string; path: string } | null
+  createdAt?: string
+  updatedAt?: string
+  deletedAt?: string | null
 }
 
 interface FormData {
-  name: string;
-  icon: { id: number; name: string; path: string } | null;
+  name: string
+  icon: { id: number; name: string; path: string } | null
 }
 
 export default defineComponent({
   name: 'ReferenceBookListPage',
   components: { IconSelector },
   setup() {
-    const $q = useQuasar();
-    const route = useRoute();
-    const router = useRouter();
-    const loading = ref(false);
-    const saving = ref(false);
-    const deleting = ref(false);
-    const showForm = ref(false);
-    const showDeleteDialog = ref(false);
-    const showIconSelector = ref(false);
-    const items = ref<ReferenceItem[]>([]);
-    const selectedItem = ref<ReferenceItem | null>(null);
-    const formData = ref<FormData>({ name: '', icon: null });
+    const $q = useQuasar()
+    const route = useRoute()
+    const router = useRouter()
+    const loading = ref(false)
+    const saving = ref(false)
+    const deleting = ref(false)
+    const showForm = ref(false)
+    const showDeleteDialog = ref(false)
+    const showIconSelector = ref(false)
+    const items = ref<ReferenceItem[]>([])
+    const selectedItem = ref<ReferenceItem | null>(null)
+    const formData = ref<FormData>({ name: '', icon: null })
 
-    const referenceType = route.params.type as string;
+    const referenceType = route.params.type as string
     const referenceConfig = {
       categories: {
         title: 'Категории',
-        endpoint: '/api/marathon-filter/category',
-        hasIcon: false
+        endpoint: '/marathon-filter/category',
+        hasIcon: false,
       },
       directions: {
         title: 'Направления',
-        endpoint: '/api/marathon-filter/direction',
-        hasIcon: true
+        endpoint: '/marathon-filter/direction',
+        hasIcon: true,
       },
       formats: {
         title: 'Форматы',
-        endpoint: '/api/marathon-filter/format',
-        hasIcon: false
+        endpoint: '/marathon-filter/format',
+        hasIcon: false,
       },
-    };
-
-    const config = referenceConfig[referenceType as keyof typeof referenceConfig];
-    if (!config) {
-      router.push('/reference-books');
-      return {};
     }
 
-    const title = ref(config.title);
-    const showIconColumn = ref(config.hasIcon);
-    const showIconField = ref(config.hasIcon);
-    const formTitle = computed(() => selectedItem.value ? 'Редактировать' : 'Добавить');
+    const config =
+      referenceConfig[referenceType as keyof typeof referenceConfig]
+    if (!config) {
+      router.push('/reference-books')
+      return {}
+    }
+
+    const title = ref(config.title)
+    const showIconColumn = ref(config.hasIcon)
+    const showIconField = ref(config.hasIcon)
+    const formTitle = computed(() =>
+      selectedItem.value ? 'Редактировать' : 'Добавить'
+    )
 
     const columns = [
       { name: 'id', label: 'ID', field: 'id', align: 'left' as const },
-      { name: 'name', label: 'Название', field: 'name', align: 'left' as const },
-      ...(showIconColumn.value ? [{ name: 'icon', label: 'Иконка', field: 'icon', align: 'center' as const, style: 'width: 44px; min-width: 44px; max-width: 56px;' }] : []),
-      { name: 'actions', label: 'Действия', field: 'actions', align: 'right' as const },
-    ];
+      {
+        name: 'name',
+        label: 'Название',
+        field: 'name',
+        align: 'left' as const,
+      },
+      ...(showIconColumn.value
+        ? [
+            {
+              name: 'icon',
+              label: 'Иконка',
+              field: 'icon',
+              align: 'center' as const,
+              style: 'width: 44px; min-width: 44px; max-width: 56px;',
+            },
+          ]
+        : []),
+      {
+        name: 'actions',
+        label: 'Действия',
+        field: 'actions',
+        align: 'right' as const,
+      },
+    ]
 
     const getFullImagePath = (path: string) => {
-      if (!path) return '';
-      if (path.startsWith('http')) return path;
-      const baseUrl = (process.env.API_URL || 'https://aivy.mobgroup.kz').replace('/api', '');
-      return `${baseUrl}${path}`;
-    };
+      if (!path) return ''
+      if (path.startsWith('http')) return path
+
+      return `${BASE_URL}${path}`
+    }
 
     const fetchItems = async () => {
-      loading.value = true;
+      loading.value = true
       try {
-        const response = await api.get(config.endpoint);
-        items.value = response.data.data || [];
+        const response = await api.get(config.endpoint)
+        items.value = response.data.data || []
       } catch (error) {
         $q.notify({
           type: 'negative',
           message: 'Ошибка при загрузке данных',
-        });
+        })
       } finally {
-        loading.value = false;
+        loading.value = false
       }
-    };
+    }
 
     const openForm = () => {
-      selectedItem.value = null;
-      formData.value = { name: '', icon: null };
-      showForm.value = true;
-    };
+      selectedItem.value = null
+      formData.value = { name: '', icon: null }
+      showForm.value = true
+    }
 
     const editItem = (item: ReferenceItem) => {
-      selectedItem.value = item;
-      formData.value = { name: item.name || '', icon: item.icon || null };
-      showForm.value = true;
-    };
+      selectedItem.value = item
+      formData.value = { name: item.name || '', icon: item.icon || null }
+      showForm.value = true
+    }
 
     const onIconSelect = (icon: { id: number; name: string; path: string }) => {
-      formData.value.icon = icon;
-    };
+      formData.value.icon = icon
+    }
 
     const saveItem = async () => {
       if (!formData.value.name) {
-        $q.notify({ type: 'negative', message: 'Введите название' });
-        return;
+        $q.notify({ type: 'negative', message: 'Введите название' })
+        return
       }
 
-      saving.value = true;
+      saving.value = true
       try {
-        const dataToSave: Record<string, any> = { name: formData.value.name };
+        const dataToSave: Record<string, any> = { name: formData.value.name }
         if (showIconField.value && formData.value.icon) {
-          dataToSave.icon = { id: formData.value.icon.id };
+          dataToSave.icon = { id: formData.value.icon.id }
         }
 
         if (selectedItem.value) {
-          await api.patch(`${config.endpoint}/${selectedItem.value.id}`, dataToSave);
-          $q.notify({ type: 'positive', message: 'Элемент успешно обновлен' });
+          await api.patch(
+            `${config.endpoint}/${selectedItem.value.id}`,
+            dataToSave
+          )
+          $q.notify({ type: 'positive', message: 'Элемент успешно обновлен' })
         } else {
-          await api.post(config.endpoint, dataToSave);
-          $q.notify({ type: 'positive', message: 'Элемент успешно создан' });
+          await api.post(config.endpoint, dataToSave)
+          $q.notify({ type: 'positive', message: 'Элемент успешно создан' })
         }
 
-        showForm.value = false;
-        fetchItems();
+        showForm.value = false
+        fetchItems()
       } catch (error) {
-        $q.notify({ type: 'negative', message: 'Ошибка при сохранении' });
+        $q.notify({ type: 'negative', message: 'Ошибка при сохранении' })
       } finally {
-        saving.value = false;
+        saving.value = false
       }
-    };
+    }
 
     const confirmDelete = (item: ReferenceItem) => {
-      selectedItem.value = item;
-      showDeleteDialog.value = true;
-    };
+      selectedItem.value = item
+      showDeleteDialog.value = true
+    }
 
     const deleteItem = async () => {
-      if (!selectedItem.value) return;
+      if (!selectedItem.value) return
 
-      deleting.value = true;
+      deleting.value = true
       try {
-        await api.delete(`${config.endpoint}/${selectedItem.value.id}`);
-        $q.notify({ type: 'positive', message: 'Элемент успешно удален' });
-        showDeleteDialog.value = false;
-        fetchItems();
+        await api.delete(`${config.endpoint}/${selectedItem.value.id}`)
+        $q.notify({ type: 'positive', message: 'Элемент успешно удален' })
+        showDeleteDialog.value = false
+        fetchItems()
       } catch (error) {
-        $q.notify({ type: 'negative', message: 'Ошибка при удалении' });
+        $q.notify({ type: 'negative', message: 'Ошибка при удалении' })
       } finally {
-        deleting.value = false;
+        deleting.value = false
       }
-    };
+    }
 
     const openLucideWebsite = () => {
-      window.open('https://lucide.dev/icons', '_blank', 'noopener,noreferrer');
-    };
+      window.open('https://lucide.dev/icons', '_blank', 'noopener,noreferrer')
+    }
 
     onMounted(() => {
-      fetchItems();
-    });
+      fetchItems()
+    })
 
     return {
       title,
@@ -309,10 +368,10 @@ export default defineComponent({
       deleteItem,
       onIconSelect,
       getFullImagePath,
-      openLucideWebsite
-    };
+      openLucideWebsite,
+    }
   },
-});
+})
 </script>
 
 <style scoped>

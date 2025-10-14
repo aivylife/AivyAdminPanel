@@ -9,6 +9,11 @@
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
 
 import { configure } from 'quasar/wrappers'
+import dotenv from 'dotenv'
+
+dotenv.config({
+  path: `.env.${process.env.ENV_FILE}`,
+})
 
 export default configure(function (/* ctx */) {
   return {

@@ -14,21 +14,34 @@
     >
       <template v-slot:body-cell-icon="props">
         <q-td :props="props" class="q-pa-none text-center">
-          <img v-if="props.row.icon && props.row.icon.path" :src="getFullImagePath(props.row.icon.path)" alt="icon" style="width:28px;height:28px;object-fit:contain;" />
+          <img
+            v-if="props.row.icon && props.row.icon.path"
+            :src="getFullImagePath(props.row.icon.path)"
+            alt="icon"
+            style="width: 28px; height: 28px; object-fit: contain"
+          />
         </q-td>
       </template>
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
-          <q-btn flat round color="primary" icon="edit" @click.stop="editCategory(props.row)" />
+          <q-btn
+            flat
+            round
+            color="primary"
+            icon="edit"
+            @click.stop="editCategory(props.row)"
+          />
           <!-- <q-btn flat round color="negative" icon="delete" @click.stop="confirmDelete(props.row)" /> -->
         </q-td>
       </template>
     </q-table>
 
     <q-dialog v-model="dialog" persistent>
-      <q-card style="min-width: 400px; max-width: 560px; padding: 0 24px;">
+      <q-card style="min-width: 400px; max-width: 560px; padding: 0 24px">
         <q-card-section>
-          <div class="text-h5 text-weight-bold text-center">{{ isEdit ? 'Редактировать категорию' : 'Добавить категорию' }}</div>
+          <div class="text-h5 text-weight-bold text-center">
+            {{ isEdit ? 'Редактировать категорию' : 'Добавить категорию' }}
+          </div>
         </q-card-section>
         <q-separator class="gradient-separator q-mt-xs" />
         <q-card-section class="">
@@ -71,7 +84,12 @@
             <q-separator class="gradient-separator q-my-xs" />
             <div class="row justify-end q-mt-md">
               <q-btn label="Отмена" color="negative" flat v-close-popup />
-              <q-btn label="СОХРАНИТЬ" type="submit" color="primary" class="q-ml-sm" />
+              <q-btn
+                label="СОХРАНИТЬ"
+                type="submit"
+                color="primary"
+                class="q-ml-sm"
+              />
             </div>
           </q-form>
         </q-card-section>
@@ -80,24 +98,36 @@
 
     <IconSelector
       v-model="showIconSelector"
-      :initial-icon="form.icon && form.icon.id ? { ...form.icon, type: '', uuidName: '', createdAt: '', updatedAt: '', createdById: 0, deletedAt: null } : null"
+      :initial-icon="
+        form.icon && form.icon.id
+          ? {
+              ...form.icon,
+              type: '',
+              uuidName: '',
+              createdAt: '',
+              updatedAt: '',
+              createdById: 0,
+              deletedAt: null,
+            }
+          : null
+      "
       @select="onIconSelect"
     />
   </q-page>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue';
-import { useQuasar } from 'quasar';
-import { api } from 'src/boot/axios';
-import FileUploader from 'src/components/FileUploader.vue';
-import IconSelector from 'src/components/IconSelector.vue';
+import { defineComponent, ref, onMounted } from 'vue'
+import { useQuasar } from 'quasar'
+import { api, BASE_URL } from 'src/boot/axios'
+import FileUploader from 'src/components/FileUploader.vue'
+import IconSelector from 'src/components/IconSelector.vue'
 
 interface Category {
-  id: number;
-  name: string;
-  photo: File | { id: number; name: string; path?: string } | null;
-  icon: { id: number; name: string; path: string } | null;
+  id: number
+  name: string
+  photo: File | { id: number; name: string; path?: string } | null
+  icon: { id: number; name: string; path: string } | null
 }
 
 export default defineComponent({
@@ -105,144 +135,156 @@ export default defineComponent({
   components: { FileUploader, IconSelector },
 
   setup() {
-    const $q = useQuasar();
-    const loading = ref(false);
-    const dialog = ref(false);
-    const showIconSelector = ref(false);
-    const isEdit = ref(false);
-    const categories = ref<Category[]>([]);
+    const $q = useQuasar()
+    const loading = ref(false)
+    const dialog = ref(false)
+    const showIconSelector = ref(false)
+    const isEdit = ref(false)
+    const categories = ref<Category[]>([])
     const pagination = ref({
       sortBy: 'name',
       descending: false,
       page: 1,
-      rowsPerPage: 10
-    });
+      rowsPerPage: 10,
+    })
 
     const form = ref({
       id: null as number | null,
       name: '',
       photo: null as File | { id: number; name: string; path?: string } | null,
-      icon: null as { id: number; name: string; path: string } | null
-    });
+      icon: null as { id: number; name: string; path: string } | null,
+    })
 
     const columns = [
-      { name: 'icon', label: 'Иконка', field: 'icon', align: 'center' as const, sortable: false, style: 'width: 44px; min-width: 44px; max-width: 56px;' },
+      {
+        name: 'icon',
+        label: 'Иконка',
+        field: 'icon',
+        align: 'center' as const,
+        sortable: false,
+        style: 'width: 44px; min-width: 44px; max-width: 56px;',
+      },
       { name: 'name', label: 'Название', field: 'name', sortable: true },
-      { name: 'actions', label: 'Действия', field: 'actions', align: 'right' as const }
-    ];
+      {
+        name: 'actions',
+        label: 'Действия',
+        field: 'actions',
+        align: 'right' as const,
+      },
+    ]
 
     const getFullImagePath = (path: string) => {
-      if (!path) return '';
-      if (path.startsWith('http')) return path;
-      const baseUrl = (process.env.API_URL || 'https://aivy.mobgroup.kz').replace('/api', '');
-      return `${baseUrl}${path}`;
-    };
+      if (!path) return ''
+      if (path.startsWith('http')) return path
+
+      return `${BASE_URL}${path}`
+    }
 
     const loadCategories = async () => {
-      loading.value = true;
+      loading.value = true
       try {
-        const response = await api.get('/api/exercise/categories');
-        categories.value = response.data;
+        const response = await api.get('/exercise/categories')
+        categories.value = response.data
       } catch (error) {
         $q.notify({
           color: 'negative',
           message: 'Ошибка при загрузке категорий',
-          icon: 'error'
-        });
+          icon: 'error',
+        })
       } finally {
-        loading.value = false;
+        loading.value = false
       }
-    };
+    }
 
     const openDialog = () => {
-      isEdit.value = false;
+      isEdit.value = false
       form.value = {
         id: null,
         name: '',
         photo: null,
-        icon: null
-      };
-      dialog.value = true;
-    };
+        icon: null,
+      }
+      dialog.value = true
+    }
 
     const editCategory = (category: Category) => {
-      isEdit.value = true;
+      isEdit.value = true
       form.value = {
         id: category.id,
         name: category.name,
         photo: null,
-        icon: category.icon
-      };
-      dialog.value = true;
-    };
+        icon: category.icon,
+      }
+      dialog.value = true
+    }
 
     const onIconSelect = (icon: { id: number; name: string; path: string }) => {
-      form.value.icon = icon;
-    };
+      form.value.icon = icon
+    }
 
     const onSubmit = async () => {
       try {
-        const formData = new FormData();
-        formData.append('name', form.value.name);
+        const formData = new FormData()
+        formData.append('name', form.value.name)
         if (form.value.photo) {
           if ('id' in form.value.photo) {
-            formData.append('photoId', form.value.photo.id.toString());
+            formData.append('photoId', form.value.photo.id.toString())
           } else {
-            formData.append('photo', form.value.photo);
+            formData.append('photo', form.value.photo)
           }
         }
         if (form.value.icon) {
-          formData.append('icon', JSON.stringify({ id: form.value.icon.id }));
+          formData.append('icon', JSON.stringify({ id: form.value.icon.id }))
         }
         if (isEdit.value && form.value.id) {
-          await api.patch(`/api/exercise/category/${form.value.id}`, formData);
+          await api.patch(`/exercise/category/${form.value.id}`, formData)
         } else {
-          await api.post('/api/exercise/category', formData);
+          await api.post('/exercise/category', formData)
         }
-        dialog.value = false;
-        loadCategories();
+        dialog.value = false
+        loadCategories()
         $q.notify({
           color: 'positive',
           message: 'Категория успешно сохранена',
-          icon: 'check'
-        });
+          icon: 'check',
+        })
       } catch (error) {
         $q.notify({
           color: 'negative',
           message: 'Ошибка при сохранении категории',
-          icon: 'error'
-        });
+          icon: 'error',
+        })
       }
-    };
+    }
 
     const confirmDelete = (category: Category) => {
       $q.dialog({
         title: 'Подтверждение',
         message: 'Вы уверены, что хотите удалить эту категорию?',
         cancel: true,
-        persistent: true
+        persistent: true,
       }).onOk(async () => {
         try {
-          await api.delete(`/api/exercise/categories/${category.id}`);
-          loadCategories();
+          await api.delete(`/exercise/categories/${category.id}`)
+          loadCategories()
           $q.notify({
             color: 'positive',
             message: 'Категория успешно удалена',
-            icon: 'check'
-          });
+            icon: 'check',
+          })
         } catch (error) {
           $q.notify({
             color: 'negative',
             message: 'Ошибка при удалении категории',
-            icon: 'error'
-          });
+            icon: 'error',
+          })
         }
-      });
-    };
+      })
+    }
 
     onMounted(() => {
-      loadCategories();
-    });
+      loadCategories()
+    })
 
     return {
       loading,
@@ -258,10 +300,10 @@ export default defineComponent({
       onSubmit,
       confirmDelete,
       onIconSelect,
-      getFullImagePath
-    };
-  }
-});
+      getFullImagePath,
+    }
+  },
+})
 </script>
 
 <style lang="scss" scoped>
@@ -350,4 +392,4 @@ export default defineComponent({
 .image-uploader {
   flex: 1;
 }
-</style> 
+</style>

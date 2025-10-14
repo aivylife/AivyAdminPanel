@@ -6,35 +6,35 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { useAuthStore } from 'src/stores/auth';
-import { api } from 'src/services/api';
+import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from 'src/stores/auth'
+import { api } from 'src/boot/axios'
 
-const router = useRouter();
-const authStore = useAuthStore();
+const router = useRouter()
+const authStore = useAuthStore()
 
 onMounted(async () => {
   try {
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get('code');
+    const params = new URLSearchParams(window.location.search)
+    const code = params.get('code')
 
     if (!code) {
-      throw new Error('Не удалось получить код авторизации');
+      throw new Error('Не удалось получить код авторизации')
     }
 
     // Отправляем код на бэкенд
-    const response = await api.post('/auth/google', { code });
-    const authData = response.data;
+    const response = await api.post('/auth/google', { code })
+    const authData = response.data
 
     // Сохраняем данные авторизации
-    authStore.setAuthData(authData);
+    authStore.setAuthData(authData)
 
     // Перенаправляем на главную страницу
-    router.push('/exercises');
+    router.push('/exercises')
   } catch (error) {
-    console.error('Auth error:', error);
-    router.push('/login');
+    console.error('Auth error:', error)
+    router.push('/login')
   }
-});
-</script> 
+})
+</script>

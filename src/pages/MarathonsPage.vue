@@ -67,7 +67,9 @@
           </template>
 
           <template v-slot:no-data>
-            <div class="full-width row flex-center text-grey q-gutter-sm q-pa-lg">
+            <div
+              class="full-width row flex-center text-grey q-gutter-sm q-pa-lg"
+            >
               <q-icon size="2em" name="sentiment_dissatisfied" />
               <span>Нет доступных марафонов</span>
               <q-btn
@@ -219,26 +221,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { useQuasar, QTableProps } from 'quasar';
-import { api } from 'src/boot/axios';
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useQuasar, QTableProps } from 'quasar'
+import { api } from 'src/boot/axios'
 
 interface FilterOption {
-  label: string;
-  value: number | null;
+  label: string
+  value: number | null
 }
 
-const router = useRouter();
-const $q = useQuasar();
-const marathons = ref([]);
-const loading = ref(false);
-const showFiltersDrawer = ref(false);
+const router = useRouter()
+const $q = useQuasar()
+const marathons = ref([])
+const loading = ref(false)
+const showFiltersDrawer = ref(false)
 
 // Справочники
-const categoryOptions = ref<FilterOption[]>([]);
-const directionOptions = ref<FilterOption[]>([]);
-const formatOptions = ref<FilterOption[]>([]);
+const categoryOptions = ref<FilterOption[]>([])
+const directionOptions = ref<FilterOption[]>([])
+const formatOptions = ref<FilterOption[]>([])
 
 // Фильтры
 const filters = ref({
@@ -248,8 +250,8 @@ const filters = ref({
   isSubscription: null as boolean | null,
   format: null as number | null,
   direction: null as number | null,
-  search: ''
-});
+  search: '',
+})
 
 // Опции для фильтров
 const ratingOptions = [
@@ -258,28 +260,28 @@ const ratingOptions = [
   { label: '4 звезды', value: 4 },
   { label: '3 звезды', value: 3 },
   { label: '2 звезды', value: 2 },
-  { label: '1 звезда', value: 1 }
-];
+  { label: '1 звезда', value: 1 },
+]
 
 const draftOptions = [
   { label: 'Все', value: null },
   { label: 'Черновик', value: true },
-  { label: 'Опубликовано', value: false }
-];
+  { label: 'Опубликовано', value: false },
+]
 
 const subscriptionOptions = [
   { label: 'Все', value: null },
   { label: 'По подписке', value: true },
-  { label: 'Отдельно', value: false }
-];
+  { label: 'Отдельно', value: false },
+]
 
 const pagination = ref({
   sortBy: 'createdAt' as string | null,
   descending: true,
   page: 1,
   rowsPerPage: 10,
-  rowsNumber: 0
-});
+  rowsNumber: 0,
+})
 
 const columns: QTableProps['columns'] = [
   {
@@ -287,7 +289,7 @@ const columns: QTableProps['columns'] = [
     required: true,
     label: 'Действия',
     align: 'left',
-    field: 'actions'
+    field: 'actions',
   },
   {
     name: 'createdAt',
@@ -296,7 +298,7 @@ const columns: QTableProps['columns'] = [
     align: 'left',
     field: 'createdAt',
     sortable: true,
-    format: (val: string) => new Date(val).toLocaleDateString('ru-RU')
+    format: (val: string) => new Date(val).toLocaleDateString('ru-RU'),
   },
   {
     name: 'title',
@@ -304,19 +306,36 @@ const columns: QTableProps['columns'] = [
     label: 'Название',
     align: 'left',
     field: 'title',
-    sortable: true
+    sortable: true,
   },
-  { name: 'description', label: 'Описание', align: 'left' as const, field: 'description', sortable: true },
-  { name: 'duration', label: 'Длительность (дни)', align: 'center' as const, field: 'duration', sortable: true }
-];
+  {
+    name: 'description',
+    label: 'Описание',
+    align: 'left' as const,
+    field: 'description',
+    sortable: true,
+  },
+  {
+    name: 'duration',
+    label: 'Длительность (дни)',
+    align: 'center' as const,
+    field: 'duration',
+    sortable: true,
+  },
+]
 
 const onRequest = async (props: { pagination: QTableProps['pagination'] }) => {
-  const { page = 1, rowsPerPage = 10, sortBy = null, descending = false } = props.pagination ?? pagination.value;
+  const {
+    page = 1,
+    rowsPerPage = 10,
+    sortBy = null,
+    descending = false,
+  } = props.pagination ?? pagination.value
 
   const params: Record<string, any> = {
     page,
-    perPage: rowsPerPage
-  };
+    perPage: rowsPerPage,
+  }
 
   // Обработка сортировки
   if (sortBy) {
@@ -324,130 +343,128 @@ const onRequest = async (props: { pagination: QTableProps['pagination'] }) => {
     if (sortBy === pagination.value.sortBy) {
       // Если уже desc, значит это третий клик - сбрасываем сортировку
       if (pagination.value.descending) {
-        pagination.value.sortBy = 'id';
-        pagination.value.descending = true;
-        params.order = JSON.stringify({ id: 'DESC' });
+        pagination.value.sortBy = 'id'
+        pagination.value.descending = true
+        params.order = JSON.stringify({ id: 'DESC' })
       } else {
         // Иначе меняем на desc
-        pagination.value.descending = true;
-        params.order = JSON.stringify({ [sortBy]: 'DESC' });
+        pagination.value.descending = true
+        params.order = JSON.stringify({ [sortBy]: 'DESC' })
       }
     } else {
       // Если кликнули на другую колонку, начинаем с asc
-      pagination.value.sortBy = sortBy;
-      pagination.value.descending = false;
-      params.order = JSON.stringify({ [sortBy]: 'ASC' });
+      pagination.value.sortBy = sortBy
+      pagination.value.descending = false
+      params.order = JSON.stringify({ [sortBy]: 'ASC' })
     }
   } else {
     // Если нет активной сортировки, используем сортировку по id DESC
-    pagination.value.sortBy = 'id';
-    pagination.value.descending = true;
-    params.order = JSON.stringify({ id: 'DESC' });
+    pagination.value.sortBy = 'id'
+    pagination.value.descending = true
+    params.order = JSON.stringify({ id: 'DESC' })
   }
 
   // Обновляем состояние пагинации для корректного отображения стрелок
-  pagination.value.page = page;
-  pagination.value.rowsPerPage = rowsPerPage;
+  pagination.value.page = page
+  pagination.value.rowsPerPage = rowsPerPage
 
   // Добавляем фильтры
-  if (filters.value.category) params.categoryId = filters.value.category;
-  if (filters.value.rating) params.rating = filters.value.rating;
-  if (filters.value.isDraft !== null) params.isDraft = filters.value.isDraft;
-  if (filters.value.isSubscription !== null) params.isSubscription = filters.value.isSubscription;
-  if (filters.value.format) params.formatId = filters.value.format;
-  if (filters.value.direction) params.directionId = filters.value.direction;
+  if (filters.value.category) params.categoryId = filters.value.category
+  if (filters.value.rating) params.rating = filters.value.rating
+  if (filters.value.isDraft !== null) params.isDraft = filters.value.isDraft
+  if (filters.value.isSubscription !== null)
+    params.isSubscription = filters.value.isSubscription
+  if (filters.value.format) params.formatId = filters.value.format
+  if (filters.value.direction) params.directionId = filters.value.direction
   if (filters.value.search) {
-    params['like.title'] = filters.value.search;
+    params['like.title'] = filters.value.search
   }
 
-  loading.value = true;
+  loading.value = true
   try {
-    const response = await api.get('/api/marathon', { params });
-    marathons.value = response.data.data || response.data;
-    pagination.value.rowsNumber = response.data.pagination?.totalElements || response.data.total || 0;
+    const response = await api.get('/marathon', { params })
+    marathons.value = response.data.data || response.data
+    pagination.value.rowsNumber =
+      response.data.pagination?.totalElements || response.data.total || 0
   } catch (error) {
-    $q.notify({ type: 'negative', message: 'Ошибка при загрузке марафонов' });
+    $q.notify({ type: 'negative', message: 'Ошибка при загрузке марафонов' })
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
 // Загрузка справочников
 const fetchCategories = async () => {
   try {
-    const response = await api.get('/api/marathon-filter/category');
+    const response = await api.get('/marathon-filter/category')
     categoryOptions.value = (response.data.data || []).map((item: any) => ({
       label: item.name,
-      value: item.id
-    }));
+      value: item.id,
+    }))
   } catch (error) {
-    console.error('Error fetching categories:', error);
+    console.error('Error fetching categories:', error)
     $q.notify({
       type: 'negative',
-      message: 'Ошибка при загрузке категорий'
-    });
+      message: 'Ошибка при загрузке категорий',
+    })
   }
-};
+}
 
 const fetchDirections = async () => {
   try {
-    const response = await api.get('/api/marathon-filter/direction');
+    const response = await api.get('/marathon-filter/direction')
     directionOptions.value = (response.data.data || []).map((item: any) => ({
       label: item.name,
-      value: item.id
-    }));
+      value: item.id,
+    }))
   } catch (error) {
-    console.error('Error fetching directions:', error);
+    console.error('Error fetching directions:', error)
     $q.notify({
       type: 'negative',
-      message: 'Ошибка при загрузке направлений'
-    });
+      message: 'Ошибка при загрузке направлений',
+    })
   }
-};
+}
 
 const fetchFormats = async () => {
   try {
-    const response = await api.get('/api/marathon-filter/format');
+    const response = await api.get('/marathon-filter/format')
     formatOptions.value = (response.data.data || []).map((item: any) => ({
       label: item.name,
-      value: item.id
-    }));
+      value: item.id,
+    }))
   } catch (error) {
-    console.error('Error fetching formats:', error);
+    console.error('Error fetching formats:', error)
     $q.notify({
       type: 'negative',
-      message: 'Ошибка при загрузке форматов'
-    });
+      message: 'Ошибка при загрузке форматов',
+    })
   }
-};
+}
 
 const editMarathon = (id: number) => {
-  router.push(`/marathons/edit/${id}`);
-};
+  router.push(`/marathons/edit/${id}`)
+}
 
 const confirmDeleteMarathon = (id: number) => {
   $q.dialog({
     title: 'Подтверждение',
     message: 'Вы действительно хотите удалить этот марафон?',
     cancel: true,
-    persistent: true
+    persistent: true,
   }).onOk(async () => {
     try {
-      await api.delete(`/api/marathon/${id}`);
-      $q.notify({ type: 'positive', message: 'Марафон успешно удален' });
-      onRequest({ pagination: pagination.value });
+      await api.delete(`/marathon/${id}`)
+      $q.notify({ type: 'positive', message: 'Марафон успешно удален' })
+      onRequest({ pagination: pagination.value })
     } catch (error) {
-      $q.notify({ type: 'negative', message: 'Ошибка при удалении марафона' });
+      $q.notify({ type: 'negative', message: 'Ошибка при удалении марафона' })
     }
-  });
-};
+  })
+}
 
 onMounted(async () => {
-  await Promise.all([
-    fetchCategories(),
-    fetchDirections(),
-    fetchFormats()
-  ]);
-  onRequest({ pagination: pagination.value });
-});
+  await Promise.all([fetchCategories(), fetchDirections(), fetchFormats()])
+  onRequest({ pagination: pagination.value })
+})
 </script>

@@ -182,7 +182,7 @@ const onRequest = async (props: { pagination: QTableProps['pagination'] }) => {
   loading.value = true
 
   try {
-    const response = await api.get('/api/real-stories', {
+    const response = await api.get('/real-stories', {
       params,
     })
 
@@ -208,7 +208,7 @@ const confirmDeleteStory = (id: number) => {
     persistent: true,
   }).onOk(async () => {
     try {
-      await api.delete(`/api/real-stories/${id}`)
+      await api.delete(`/real-stories/${id}`)
 
       $q.notify({
         type: 'positive',

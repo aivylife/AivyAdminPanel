@@ -131,6 +131,7 @@
 import { defineComponent, ref, watch, computed, PropType } from 'vue'
 import { useQuasar } from 'quasar'
 import { ValidationRule } from 'quasar'
+import { BASE_URL } from 'src/boot/axios'
 
 export default defineComponent({
   name: 'FileUploader',
@@ -248,12 +249,12 @@ export default defineComponent({
 
         // Если это файл с API (уже загружен)
         if (typeof file === 'object' && file.id && file.path) {
-          return `https://aivy.mobgroup.kz${file.path}`
+          return `${BASE_URL}${file.path}`
         }
 
         // Если передан только путь
         if (typeof file === 'string') {
-          return `https://aivy.mobgroup.kz${file}`
+          return `${BASE_URL}${file}`
         }
 
         return '' // Неизвестный формат
@@ -303,9 +304,7 @@ export default defineComponent({
 
         xhr.open(
           'POST',
-          `https://aivy.mobgroup.kz/api-file/file/upload/${getFileType(
-            fileToUpload
-          )}`
+          `${BASE_URL}/api-file/file/upload/${getFileType(fileToUpload)}`
         )
         xhr.setRequestHeader(
           'Authorization',

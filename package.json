@@ -7,9 +7,9 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "test": "echo \"No test specified\" && exit 0",
-    "dev": "quasar dev",
-    "build": "quasar build"
+    "dev": "ENV_FILE=development quasar dev",
+    "build:development": "ENV_FILE=development quasar build",
+    "build:production": "ENV_FILE=production quasar build"
   },
   "dependencies": {
     "@quasar/extras": "^1.16.4",

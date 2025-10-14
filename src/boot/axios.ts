@@ -15,31 +15,34 @@ declare module '@vue/runtime-core' {
 // "export default () => {}" function below (which runs individually
 // for each client)
 
+export const API_URL = import.meta.env.VITE_API_URL
+export const BASE_URL = import.meta.env.VITE_BASE_URL
+
 const api = axios.create({
-  baseURL: process.env.API_URL || 'https://aivy.mobgroup.kz',
+  baseURL: API_URL,
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
   },
-  withCredentials: true
-});
+  withCredentials: true,
+})
 
 // Добавляем интерцептор для авторизации
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('accessToken');
+  const token = localStorage.getItem('accessToken')
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+    config.headers.Authorization = `Bearer ${token}`
   }
-  return config;
-});
+  return config
+})
 
 // Добавляем интерцептор для обработки ошибок
 api.interceptors.response.use(
-  response => response,
-  error => {
-    console.error('API Error:', error);
-    return Promise.reject(error);
+  (response) => response,
+  (error) => {
+    console.error('API Error:', error)
+    return Promise.reject(error)
   }
-);
+)
 
 export default boot(({ app }) => {
   app.config.globalProperties.$http = api
@@ -48,4 +51,4 @@ export default boot(({ app }) => {
   }
 })
 
-export { api };
+export { api }

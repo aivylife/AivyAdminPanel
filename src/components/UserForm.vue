@@ -142,7 +142,7 @@ export default defineComponent({
       loading.value = true
 
       try {
-        const response = await api.get<User>(`/api/user/${id}`, {
+        const response = await api.get<User>(`/user/${id}`, {
           params: { relations: 'subscription' },
         })
         const user = response.data
@@ -169,7 +169,7 @@ export default defineComponent({
     const fetchSubscriptions = async () => {
       try {
         const response = await api.get<PaginationData<Subscription[]>>(
-          '/api/subscription-plan',
+          '/subscription-plan',
           {
             params: {
               page: 1,
@@ -203,7 +203,7 @@ export default defineComponent({
 
       if (formData.value.subscriptionPlanId) {
         try {
-          await api.post('/api/payment/add-subscription', {
+          await api.post('/payment/add-subscription', {
             userId: Number(route.params.id),
             subscriptionPlanId: formData.value.subscriptionPlanId,
           })
@@ -219,7 +219,7 @@ export default defineComponent({
       }
 
       try {
-        await api.patch(`/api/user/${route.params.id}`, data)
+        await api.patch(`/user/${route.params.id}`, data)
 
         $q?.notify({
           type: 'positive',

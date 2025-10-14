@@ -523,7 +523,7 @@ export default defineComponent({
     const fetchCategories = async () => {
       loadingCategories.value = true
       try {
-        const response = await api.get('/api/marathon-filter/category')
+        const response = await api.get('/marathon-filter/category')
         categoryOptions.value = (response.data.data || []).map((item: any) => ({
           label: item.name,
           value: item.id,
@@ -542,7 +542,7 @@ export default defineComponent({
     const fetchDirections = async () => {
       loadingDirections.value = true
       try {
-        const response = await api.get('/api/marathon-filter/direction')
+        const response = await api.get('/marathon-filter/direction')
         directionOptions.value = (response.data.data || []).map(
           (item: any) => ({
             label: item.name,
@@ -563,7 +563,7 @@ export default defineComponent({
     const fetchFormats = async () => {
       loadingFormats.value = true
       try {
-        const response = await api.get('/api/marathon-filter/format')
+        const response = await api.get('/marathon-filter/format')
         formatOptions.value = (response.data.data || []).map((item: any) => ({
           label: item.name,
           value: item.id,
@@ -582,7 +582,7 @@ export default defineComponent({
     const fetchMarathonData = async (id: string | number) => {
       loading.value = true
       try {
-        const response = await api.get(`/api/marathon/${id}`, {
+        const response = await api.get(`/marathon/${id}`, {
           params: {
             relations: 'modules,modules.dayExercises',
           },
@@ -643,13 +643,13 @@ export default defineComponent({
       loading.value = true
       try {
         if (isEdit.value) {
-          await api.patch(`/api/marathon/${route.params.id}`, formData.value)
+          await api.patch(`/marathon/${route.params.id}`, formData.value)
           $q.notify({
             type: 'positive',
             message: 'Марафон успешно обновлен',
           })
         } else {
-          await api.post('/api/marathon', formData.value)
+          await api.post('/marathon', formData.value)
           $q.notify({
             type: 'positive',
             message: 'Марафон успешно создан',

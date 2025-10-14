@@ -1,10 +1,20 @@
 <template>
-  <q-dialog :model-value="modelValue" @update:model-value="$emit('update:modelValue')" persistent>
-    <q-card style="width: 90vw; max-width: 1200px;">
+  <q-dialog
+    :model-value="modelValue"
+    @update:model-value="$emit('update:modelValue')"
+    persistent
+  >
+    <q-card style="width: 90vw; max-width: 1200px">
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h6">Выбор упражнений</div>
         <q-space />
-        <q-btn icon="close" flat round dense @click="$emit('update:modelValue', false)" />
+        <q-btn
+          icon="close"
+          flat
+          round
+          dense
+          @click="$emit('update:modelValue', false)"
+        />
       </q-card-section>
 
       <q-card-section>
@@ -25,7 +35,9 @@
           @request="onRequest"
         >
           <template v-slot:no-data>
-            <div class="full-width row flex-center text-grey q-gutter-sm q-pa-lg">
+            <div
+              class="full-width row flex-center text-grey q-gutter-sm q-pa-lg"
+            >
               <q-icon size="2em" name="sentiment_dissatisfied" />
               <span>Нет упражнений для выбора</span>
             </div>
@@ -46,10 +58,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, watch, PropType, computed } from 'vue';
-import { useQuasar, QTableColumn } from 'quasar';
-import { api } from 'src/boot/axios';
-import { Exercise } from 'src/types/exercise';
+import { defineComponent, ref, onMounted, watch, PropType, computed } from 'vue'
+import { useQuasar, QTableColumn } from 'quasar'
+import { api } from 'src/boot/axios'
+import { Exercise } from 'src/types/exercise'
 
 export default defineComponent({
   name: 'ExerciseSelector',
@@ -57,108 +69,147 @@ export default defineComponent({
     modelValue: Boolean, // Для управления видимостью диалога
     initialSelection: {
       type: Array as PropType<number[]>,
-      default: () => []
-    }
+      default: () => [],
+    },
   },
   emits: ['update:modelValue', 'update:selected'],
 
   setup(props, { emit }) {
-    const $q = useQuasar();
-    const exercises = ref<Exercise[]>([]);
-    const loading = ref(false);
-    const localSelected = ref<Exercise[]>([]); // Хранит выбранные объекты Exercise
-    const total = ref(0);
+    const $q = useQuasar()
+    const exercises = ref<Exercise[]>([])
+    const loading = ref(false)
+    const localSelected = ref<Exercise[]>([]) // Хранит выбранные объекты Exercise
+    const total = ref(0)
 
     const pagination = ref({
       sortBy: 'createdAt',
       descending: true,
       page: 1,
       rowsPerPage: 10,
-      rowsNumber: 0
-    });
+      rowsNumber: 0,
+    })
 
     const columns: QTableColumn[] = [
-      { name: 'title', label: 'Название', align: 'left', field: 'title', sortable: true },
-      { name: 'description', label: 'Краткое описание', align: 'left', field: 'description', classes: 'description-cell' },
-      { name: 'type', label: 'Тип', align: 'left', field: row => row.type?.name || '-', sortable: true }, // Отображаем имя типа
-      { name: 'timeCount', label: 'Время (мин)', align: 'center', field: 'timeCount', sortable: true },
-    ];
+      {
+        name: 'title',
+        label: 'Название',
+        align: 'left',
+        field: 'title',
+        sortable: true,
+      },
+      {
+        name: 'description',
+        label: 'Краткое описание',
+        align: 'left',
+        field: 'description',
+        classes: 'description-cell',
+      },
+      {
+        name: 'type',
+        label: 'Тип',
+        align: 'left',
+        field: (row) => row.type?.name || '-',
+        sortable: true,
+      }, // Отображаем имя типа
+      {
+        name: 'timeCount',
+        label: 'Время (мин)',
+        align: 'center',
+        field: 'timeCount',
+        sortable: true,
+      },
+    ]
 
     const fetchExercises = async (params: Record<string, any> = {}) => {
-      loading.value = true;
-      exercises.value = [];
+      loading.value = true
+      exercises.value = []
       try {
-        const response = await api.get<{ data: Exercise[], pagination: { totalElements: number, perPage: number, page: number } }>('/api/exercise', { 
+        const response = await api.get<{
+          data: Exercise[]
+          pagination: { totalElements: number; perPage: number; page: number }
+        }>('/exercise', {
           params: {
             ...params,
-            isMarathon: true
-          }
-        });
+            isMarathon: true,
+          },
+        })
 
         if (response.data && Array.isArray(response.data.data)) {
-          exercises.value = response.data.data;
+          exercises.value = response.data.data
           if (response.data.pagination) {
-            total.value = response.data.pagination.totalElements;
-            pagination.value.rowsNumber = response.data.pagination.totalElements;
-            pagination.value.page = response.data.pagination.page;
-            pagination.value.rowsPerPage = response.data.pagination.perPage;
+            total.value = response.data.pagination.totalElements
+            pagination.value.rowsNumber = response.data.pagination.totalElements
+            pagination.value.page = response.data.pagination.page
+            pagination.value.rowsPerPage = response.data.pagination.perPage
           }
         } else {
-          console.error('Invalid API response structure for exercises:', response.data);
+          console.error(
+            'Invalid API response structure for exercises:',
+            response.data
+          )
           $q.notify({
             type: 'negative',
-            message: 'Некорректный ответ от сервера при загрузке упражнений'
-          });
+            message: 'Некорректный ответ от сервера при загрузке упражнений',
+          })
         }
 
         if (props.initialSelection.length > 0) {
-          localSelected.value = exercises.value.filter(ex => props.initialSelection.includes(ex.id));
+          localSelected.value = exercises.value.filter((ex) =>
+            props.initialSelection.includes(ex.id)
+          )
         }
-
       } catch (error) {
-        console.error('Error fetching exercises:', error);
+        console.error('Error fetching exercises:', error)
         $q.notify({
           type: 'negative',
-          message: 'Ошибка при загрузке упражнений'
-        });
+          message: 'Ошибка при загрузке упражнений',
+        })
       } finally {
-        loading.value = false;
+        loading.value = false
       }
-    };
+    }
 
     const onRequest = async (props: { pagination: any }) => {
-      const { page, rowsPerPage, sortBy, descending } = props.pagination;
-      
+      const { page, rowsPerPage, sortBy, descending } = props.pagination
+
       const params: Record<string, any> = {
         page,
-        perPage: rowsPerPage
-      };
+        perPage: rowsPerPage,
+      }
 
       if (sortBy) {
-        params.order = JSON.stringify({ [sortBy]: descending ? 'DESC' : 'ASC' });
+        params.order = JSON.stringify({ [sortBy]: descending ? 'DESC' : 'ASC' })
       }
 
-      await fetchExercises(params);
-    };
+      await fetchExercises(params)
+    }
 
     const confirmSelection = () => {
-      const selectedIds = localSelected.value.map(ex => ex.id);
-      emit('update:selected', selectedIds);
-      emit('update:modelValue', false); // Закрываем диалог
-    };
+      const selectedIds = localSelected.value.map((ex) => ex.id)
+      emit('update:selected', selectedIds)
+      emit('update:modelValue', false) // Закрываем диалог
+    }
 
     // Следим за открытием диалога, чтобы загрузить данные
-    watch(() => props.modelValue, (newValue) => {
-      if (newValue) {
-        fetchExercises();
+    watch(
+      () => props.modelValue,
+      (newValue) => {
+        if (newValue) {
+          fetchExercises()
+        }
       }
-    });
+    )
 
     // Обновляем localSelected, если initialSelection изменился извне
-    watch(() => props.initialSelection, (newSelection) => {
-       localSelected.value = exercises.value.filter(ex => newSelection.includes(ex.id));
-    }, { deep: true });
-
+    watch(
+      () => props.initialSelection,
+      (newSelection) => {
+        localSelected.value = exercises.value.filter((ex) =>
+          newSelection.includes(ex.id)
+        )
+      },
+      { deep: true }
+    )
 
     return {
       exercises,
@@ -167,10 +218,10 @@ export default defineComponent({
       localSelected,
       confirmSelection,
       pagination,
-      onRequest
-    };
-  }
-});
+      onRequest,
+    }
+  },
+})
 </script>
 
 <style lang="scss" scoped>
@@ -184,4 +235,4 @@ export default defineComponent({
   overflow: hidden;
   text-overflow: ellipsis;
 }
-</style> 
+</style>

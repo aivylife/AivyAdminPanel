@@ -1,10 +1,20 @@
 <template>
-  <q-dialog :model-value="modelValue" @update:model-value="$emit('update:modelValue')" persistent>
-    <q-card style="width: 90vw; max-width: 1200px;">
+  <q-dialog
+    :model-value="modelValue"
+    @update:model-value="$emit('update:modelValue')"
+    persistent
+  >
+    <q-card style="width: 90vw; max-width: 1200px">
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h6">Выбор иконки</div>
         <q-space />
-        <q-btn icon="close" flat round dense @click="$emit('update:modelValue', false)" />
+        <q-btn
+          icon="close"
+          flat
+          round
+          dense
+          @click="$emit('update:modelValue', false)"
+        />
       </q-card-section>
 
       <q-card-section>
@@ -100,7 +110,7 @@
             label="Выберите файл"
             accept="image/*"
             outlined
-            :rules="[val => !!val || 'Выберите файл']"
+            :rules="[(val) => !!val || 'Выберите файл']"
           >
             <template v-slot:prepend>
               <q-icon name="attach_file" />
@@ -124,137 +134,144 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { useQuasar } from 'quasar';
-import { api } from 'src/boot/axios';
+import { ref, watch } from 'vue'
+import { useQuasar } from 'quasar'
+import { api, BASE_URL } from 'src/boot/axios'
 
 interface Icon {
-  id: number;
-  name: string;
-  path: string;
-  type: string;
-  uuidName: string;
-  createdAt: string;
-  updatedAt: string;
-  createdById: number;
-  deletedAt: string | null;
+  id: number
+  name: string
+  path: string
+  type: string
+  uuidName: string
+  createdAt: string
+  updatedAt: string
+  createdById: number
+  deletedAt: string | null
 }
 
 interface Props {
-  modelValue: boolean;
-  initialIcon?: Icon | null;
+  modelValue: boolean
+  initialIcon?: Icon | null
 }
 
 interface Emits {
-  (e: 'update:modelValue', value: boolean): void;
-  (e: 'select', icon: Icon): void;
+  (e: 'update:modelValue', value: boolean): void
+  (e: 'select', icon: Icon): void
 }
 
-const props = defineProps<Props>();
-const emit = defineEmits<Emits>();
+const props = defineProps<Props>()
+const emit = defineEmits<Emits>()
 
-const $q = useQuasar();
-const icons = ref<Icon[]>([]);
-const selectedIcon = ref<Icon | null>(props.initialIcon || null);
-const search = ref('');
-const showUploadDialog = ref(false);
-const newIcon = ref<File | null>(null);
-const uploading = ref(false);
+const $q = useQuasar()
+const icons = ref<Icon[]>([])
+const selectedIcon = ref<Icon | null>(props.initialIcon || null)
+const search = ref('')
+const showUploadDialog = ref(false)
+const newIcon = ref<File | null>(null)
+const uploading = ref(false)
 
 const pagination = ref({
   page: 1,
   rowsPerPage: 24,
-  rowsNumber: 0
-});
+  rowsNumber: 0,
+})
 
 const getFullImagePath = (path: string) => {
-  if (!path) return '';
-  if (path.startsWith('http')) return path;
-  const baseUrl = (process.env.API_URL || 'https://aivy.mobgroup.kz').replace('/api', '');
-  return `${baseUrl}${path}`;
-};
+  if (!path) return ''
+  if (path.startsWith('http')) return path
+
+  return `${BASE_URL}${path}`
+}
 
 const handleImageError = (error: any) => {
-  console.error('Error loading image:', error);
-};
+  console.error('Error loading image:', error)
+}
 
 const loadIcons = async () => {
   try {
     const params: Record<string, any> = {
       page: pagination.value.page,
-      perPage: pagination.value.rowsPerPage
-    };
-
-    if (search.value) {
-      params.search = search.value;
+      perPage: pagination.value.rowsPerPage,
     }
 
-    const response = await api.get('/api-file/file/icons', { params });
-    icons.value = response.data;
-    pagination.value.rowsNumber = response.data.length;
+    if (search.value) {
+      params.search = search.value
+    }
+
+    const response = await api.get('/api-file/file/icons', { params })
+    icons.value = response.data
+    pagination.value.rowsNumber = response.data.length
   } catch (error) {
-    console.error('Error loading icons:', error);
+    console.error('Error loading icons:', error)
     $q.notify({
       type: 'negative',
-      message: 'Ошибка при загрузке иконок'
-    });
+      message: 'Ошибка при загрузке иконок',
+    })
   }
-};
+}
 
-const onRequest = async ({ pagination: newPagination }: { pagination: typeof pagination.value }) => {
-  pagination.value = newPagination;
-  await loadIcons();
-};
+const onRequest = async ({
+  pagination: newPagination,
+}: {
+  pagination: typeof pagination.value
+}) => {
+  pagination.value = newPagination
+  await loadIcons()
+}
 
 const selectIcon = (icon: Icon) => {
-  selectedIcon.value = icon;
-};
+  selectedIcon.value = icon
+}
 
 const confirmSelection = () => {
   if (selectedIcon.value) {
-    emit('select', selectedIcon.value);
-    emit('update:modelValue', false);
+    emit('select', selectedIcon.value)
+    emit('update:modelValue', false)
   }
-};
+}
 
 const uploadIcon = async () => {
-  if (!newIcon.value) return;
+  if (!newIcon.value) return
 
-  uploading.value = true;
+  uploading.value = true
   try {
-    const formData = new FormData();
-    formData.append('file', newIcon.value);
+    const formData = new FormData()
+    formData.append('file', newIcon.value)
 
     await api.post('/api-file/file/upload/icon', formData, {
       headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    });
+        'Content-Type': 'multipart/form-data',
+      },
+    })
 
     $q.notify({
       type: 'positive',
-      message: 'Иконка успешно загружена'
-    });
+      message: 'Иконка успешно загружена',
+    })
 
-    showUploadDialog.value = false;
-    newIcon.value = null;
-    await loadIcons();
+    showUploadDialog.value = false
+    newIcon.value = null
+    await loadIcons()
   } catch (error) {
-    console.error('Error uploading icon:', error);
+    console.error('Error uploading icon:', error)
     $q.notify({
       type: 'negative',
-      message: 'Ошибка при загрузке иконки'
-    });
+      message: 'Ошибка при загрузке иконки',
+    })
   } finally {
-    uploading.value = false;
+    uploading.value = false
   }
-};
+}
 
-watch(() => props.modelValue, (newValue) => {
-  if (newValue) {
-    loadIcons();
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    if (newValue) {
+      loadIcons()
+    }
   }
-});
+)
 </script>
 
 <style lang="scss" scoped>
@@ -272,7 +289,7 @@ watch(() => props.modelValue, (newValue) => {
   justify-content: flex-start;
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   padding: 16px 8px 8px 8px;
   cursor: pointer;
   min-height: 120px;
@@ -314,4 +331,4 @@ watch(() => props.modelValue, (newValue) => {
   font-size: 12px;
   color: #666;
 }
-</style> 
+</style>
