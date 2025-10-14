@@ -10,10 +10,17 @@
 
 import { configure } from 'quasar/wrappers'
 import dotenv from 'dotenv'
+import { fileURLToPath } from 'node:url'
+import path from 'node:path'
 
-dotenv.config({
-  path: `.env.${process.env.ENV_FILE}`,
-})
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+const envFile = process.env.ENV_FILE || 'development'
+const envPath = path.resolve(__dirname, `.env.${envFile}`)
+
+const envConfig = dotenv.config({ path: envPath })
+
+const env = envConfig.parsed || {}
 
 export default configure(function (/* ctx */) {
   return {
@@ -60,6 +67,19 @@ export default configure(function (/* ctx */) {
       },
 
       vueRouterMode: 'history', // available values: 'hash', 'history'
+
+      extendViteConf(viteConf) {
+        // Convert env variables to the format Vite expects
+        const defineEnv = {}
+        Object.keys(env).forEach((key) => {
+          // Vite requires stringified values for define
+          defineEnv[`import.meta.env.${key}`] = JSON.stringify(env[key])
+        })
+
+        return {
+          define: defineEnv,
+        }
+      },
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer

@@ -38,6 +38,7 @@
     "@unocss/vite": "^66.1.0-beta.8",
     "@vitejs/plugin-vue": "^5.2.3",
     "autoprefixer": "^10.4.2",
+    "dotenv": "^17.2.3",
     "typescript": "~5.5.3",
     "unocss": "^66.1.0-beta.8"
   },
